@@ -15,8 +15,8 @@
     "require": {
         "symfony/http-foundation": "^5.4",
         "ramsey/uuid": "^4.7",
-        "vlucas/phpdotenv": "^5.5",
-        "vladviolentiy/viva-framework": "^0.4.4",
+        "symfony/dotenv": "^6.4",
+        "vladviolentiy/viva-framework": "^0.5.0",
         "ext-pdo": "*",
         "ext-openssl": "*",
         "ext-mysqli": "*",

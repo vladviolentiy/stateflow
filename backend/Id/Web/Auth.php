@@ -13,12 +13,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Auth extends Web
 {
-    private readonly \Flow\Id\Controller\Auth $controller;
+    private readonly \Flow\Id\Controller\AuthController $controller;
 
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->controller = new \Flow\Id\Controller\Auth(new Storage());
+        $this->controller = new \Flow\Id\Controller\AuthController(new Storage());
     }
 
     public function checkIssetClient(): Response

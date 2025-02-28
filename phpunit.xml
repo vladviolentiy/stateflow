@@ -23,6 +23,7 @@
         <include>
             <directory suffix=".php">backend/Core</directory>
             <directory suffix=".php">backend/Id/Controller</directory>
+            <directory suffix=".php">backend/Id/Storage</directory>
         </include>
         <report>
             <html outputDirectory="coverageReport"></html>

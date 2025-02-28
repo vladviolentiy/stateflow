@@ -3,6 +3,7 @@
 namespace Flow\Id\Web\Profile;
 
 use Flow\Core\WebPrivate;
+use Flow\Id\Controller\Profile\SessionsController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,12 +11,12 @@ use VladViolentiy\VivaFramework\SuccessResponse;
 
 class Sessions extends WebPrivate
 {
-    private readonly \Flow\Id\Controller\Profile\Sessions $sessions;
+    private readonly SessionsController $sessions;
 
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->sessions = new \Flow\Id\Controller\Profile\Sessions($this->storage, $this->info['userId']);
+        $this->sessions = new SessionsController($this->storage, $this->info['userId']);
     }
 
     public function get(): Response

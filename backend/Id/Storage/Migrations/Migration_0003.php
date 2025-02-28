@@ -4,7 +4,7 @@ namespace Flow\Id\Storage\Migrations;
 
 class Migration_0003 extends Migration
 {
-    public function init(): void
+    public function up(): void
     {
         $this->migrator->query('create table sessionsMeta
 (
@@ -19,5 +19,10 @@ class Migration_0003 extends Migration
     constraint sessionMeta_pk primary key (id),
     constraint sessionMeta_sessions_id_fk foreign key (sessionId) references sessions (id)
 );');
+    }
+
+    public function related(): array
+    {
+        return [];
     }
 }

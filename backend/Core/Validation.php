@@ -58,8 +58,11 @@ $keyInput
         $asciiStat = $self->check_ascii($decodedData);
 
         $log = log(count($freq), 2);
-        if ($log == 0 || $entropy === 0.0 || $entropy < $log * 0.9 || $asciiStat > 0.38) {
+        if ($log == 0 || $entropy === 0.0 || $entropy < $log * 0.9) {
             throw new ValidationException('Bad encrypted data');
+        }
+        if ($asciiStat > 0.38) {
+            throw new ValidationException('Bad encrypted data (ascii');
         }
 
         return true;

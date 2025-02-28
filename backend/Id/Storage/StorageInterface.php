@@ -41,7 +41,7 @@ interface StorageInterface
      * @param non-empty-string $globalHash
      * @return positive-int
      */
-    public function addNewUser(UuidInterface $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int;
+    public function insertUser(UuidInterface $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int;
 
     /**
      * @param positive-int $userId

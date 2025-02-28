@@ -4,21 +4,12 @@ namespace Flow\Id\Controller\Profile;
 
 use Flow\Core\Exceptions\DatabaseException;
 use Flow\Core\Exceptions\NotfoundException;
-use Flow\Id\Storage\StorageInterface;
+use Flow\Id\Controller\AuthenticateBaseController;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 use VladViolentiy\VivaFramework\Validation;
 
-class EmailController
+class EmailController extends AuthenticateBaseController
 {
-    /**
-     * @param StorageInterface $storage
-     * @param positive-int $userId
-     */
-    public function __construct(
-        private readonly StorageInterface $storage,
-        private readonly int $userId,
-    ) {}
-
     /**
      * @return list<array{id:int,email:string}>
      * @throws DatabaseException
@@ -38,6 +29,11 @@ class EmailController
     {
         Validation::nonEmpty($emailHash);
         Validation::nonEmpty($emailEncrypted);
+
+        \Flow\Core\Validation::encryptedData($emailEncrypted);
+
+        $emailHash = hash('sha384', $this->appToken . $emailHash);
+
         $id = $this->storage->insertNewEmail($this->userId, $emailEncrypted, $emailHash, $allowAuth);
 
         return $id;
@@ -55,6 +51,10 @@ class EmailController
         Validation::id($itemId);
         Validation::hash($emailHash);
         Validation::nonEmpty($emailEncrypted);
+        \Flow\Core\Validation::encryptedData($emailEncrypted);
+
+        $emailHash = hash('sha384', $this->appToken . $emailHash);
+
 
         $this->storage->editEmailItem($itemId, $this->userId, $emailEncrypted, $emailHash, $allowAuth);
     }

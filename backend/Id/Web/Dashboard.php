@@ -17,8 +17,8 @@ class Dashboard extends WebPrivate
 
     public function getBasicInfo(): Response
     {
-        $generalController = new General($this->storage);
-        $data = $generalController->getBasicInfo($this->info['userId']);
+        $generalController = new General($this->storage, $this->info['userId']);
+        $data = $generalController->getBasicInfo();
 
         return new JsonResponse(SuccessResponse::data($data));
 
@@ -32,7 +32,7 @@ class Dashboard extends WebPrivate
         $al = $this->request->get('al');
         $ae = $this->request->get('ae');
         $lastSeen = $this->request->get('lastSeen');
-        $AuthController = new \Flow\Id\Controller\Auth($this->storage);
+        $AuthController = new \Flow\Id\Controller\AuthController($this->storage);
         $AuthController->writeHashInfo(
             $token,
             $ip,

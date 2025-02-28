@@ -2,17 +2,16 @@
 
 namespace Flow\Id\Controller\Profile;
 
-use Flow\Id\Controller\Base;
+use Flow\Id\Controller\AuthenticateBaseController;
 
-class General extends Base
+class General extends AuthenticateBaseController
 {
     /**
-     * @param positive-int $userId
      * @return array{fNameEncrypted:non-empty-string,lNameEncrypted:non-empty-string,bDayEncrypted:non-empty-string}
      */
-    public function getBasicInfo(int $userId): array
+    public function getBasicInfo(): array
     {
-        $info = $this->storage->getBasicInfo($userId);
+        $info = $this->storage->getBasicInfo($this->userId);
 
         return $info;
     }

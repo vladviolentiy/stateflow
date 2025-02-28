@@ -46,7 +46,7 @@ class UsersArrayStorage implements StorageInterface
         return false;
     }
 
-    public function addNewUser(UuidInterface $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
+    public function insertUser(UuidInterface $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
     {
         $userId = count($this->users) + 1;
         $this->users[] = [

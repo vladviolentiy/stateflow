@@ -6,27 +6,29 @@ use Flow\Core\Database;
 use Flow\Core\Enums\ServicesEnum;
 use Flow\Id\Storage\Migrations\Migration;
 use Ramsey\Uuid\UuidInterface;
-use VladViolentiy\VivaFramework\Databases\Migrations\MysqliMigration;
-use VladViolentiy\VivaFramework\Databases\Mysqli;
+use VladViolentiy\VivaFramework\Databases\MigrationV2\MysqlMigrationManager;
 use VladViolentiy\VivaFramework\Databases\MysqliV2;
+use mysqli;
 
 class Storage extends MysqliV2 implements StorageInterface
 {
-    public function __construct()
+    public function __construct(?mysqli $connection = null)
     {
-        $connection = Database::createConnection(ServicesEnum::Id);
+        if ($connection === null) {
+            $connection = Database::createConnection(ServicesEnum::Id);
+        }
         $this->setDb($connection);
-        Mysqli::checkMigration(new MysqliMigration($connection), Migration::$list);
+        (new MysqlMigrationManager($connection))->migrate(Migration::$list);
 
     }
 
     public function getUserByEmail(string $hashedEmail): ?array
     {
         /** @var array{userId:int,salt:string,iv:string}|null $info */
-        $info = $this->executeQuery('SELECT u.id as userId,salt,iv
+        $info = $this->executeQuery('SELECT u.id as userId, salt, iv
 FROM usersEmails 
     JOIN users u on usersEmails.userId = u.id
-WHERE emailHash=? and allowAuth=true and deleted=false', [$hashedEmail])->fetch_array(MYSQLI_ASSOC);
+WHERE emailHash=unhex(?) and allowAuth=true and deleted=false', [$hashedEmail])->fetch_array(MYSQLI_ASSOC);
         if ($info === null) {
             return null;
         }
@@ -53,7 +55,7 @@ WHERE uuid=unhex(?)', [bin2hex($uuid->getBytes())])->fetch_array(MYSQLI_ASSOC);
         $info = $this->executeQuery('SELECT users.id as userId,salt,iv
 FROM users
     JOIN usersPhones uP on users.id = uP.userId
-WHERE phoneHash=?', [$hashedPhone])->fetch_array(MYSQLI_ASSOC);
+WHERE phoneHash=unhex(?)', [$hashedPhone])->fetch_array(MYSQLI_ASSOC);
         if ($info === null) {
             return null;
         }
@@ -69,12 +71,12 @@ WHERE phoneHash=?', [$hashedPhone])->fetch_array(MYSQLI_ASSOC);
         return $info[0] > 0;
     }
 
-    public function addNewUser(UuidInterface $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
+    public function insertUser(UuidInterface $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
     {
         /** @var string $globalHash */
         $globalHash = hex2bin($globalHash);
         $this->executeQueryBool(
-            'INSERT INTO users(uuid, password, iv, salt,fNameEncrypted,lNameEncrypted,bDayEncrypted,globalHash) VALUES(unhex(?),?,?,?,?,?,?,?)',
+            'INSERT INTO users(uuid, password, iv, salt, fNameEncrypted, lNameEncrypted, bDayEncrypted, globalHash) VALUES(unhex(?),?,?,?,?,?,?,?)',
             [bin2hex($uuid->getBytes()), $password, $iv, $salt, $fNameEncrypted, $lNameEncrypted, $bDayEncrypted, $globalHash],
         );
         /** @var positive-int $insId */
@@ -107,7 +109,7 @@ WHERE id=?', [$userId])->fetch_array(MYSQLI_ASSOC);
     public function checkIssetToken(string $token): ?array
     {
         /** @var array{userId:positive-int,lang:non-empty-string,sessionId:positive-int}|null $info */
-        $info = $this->executeQuery('SELECT userId,u.defaultLang as lang,sessions.id as sessionId 
+        $info = $this->executeQuery('SELECT userId, u.defaultLang as lang, sessions.id as sessionId 
 FROM sessions 
     JOIN users u on u.id = sessions.userId 
 WHERE authHash=unhex(?)', [$token])->fetch_array(MYSQLI_ASSOC);
@@ -133,12 +135,12 @@ WHERE authHash=unhex(?)', [$token])->fetch_array(MYSQLI_ASSOC);
 
     public function editEmailItem(int $userId, int $itemId, string $encryptedEmail, string $emailHash, bool $allowAuth): void
     {
-        $this->executeQueryBool('UPDATE usersEmails SET emailEncrypted=?, emailHash=UNHEX(?),allowAuth=? WHERE id=? and userId=?', [$encryptedEmail, $emailHash, (int) $allowAuth, $itemId, $userId]);
+        $this->executeQueryBool('UPDATE usersEmails SET emailEncrypted=?, emailHash=UNHEX(?),allowAuth=? WHERE id=? and userId=?', [$encryptedEmail, $emailHash, chr($allowAuth ? 1 : 0), $itemId, $userId]);
     }
 
     public function insertNewEmail(int $userId, string $encryptedEmail, string $emailHash, bool $allowAuth): int
     {
-        $this->executeQueryBool('INSERT INTO usersEmails(userId, emailHash, emailEncrypted,allowAuth) VALUES (?,unhex(?),?,?)', [$userId, $emailHash, $encryptedEmail, (int) $allowAuth]);
+        $this->executeQueryBool('INSERT INTO usersEmails(userId, emailHash, emailEncrypted,allowAuth) VALUES (?,unhex(?),?,?)', [$userId, $emailHash, $encryptedEmail, chr($allowAuth ? 1 : 0)]);
 
         return $this->insertId();
     }
@@ -146,7 +148,7 @@ WHERE authHash=unhex(?)', [$token])->fetch_array(MYSQLI_ASSOC);
     public function getEmailItem(int $userId, int $itemId): ?array
     {
         /** @var array{emailEncrypted:string,allowAuth:int}|null $info */
-        $info = $this->executeQuery('SELECT emailEncrypted,allowAuth FROM usersEmails WHERE id=? and userId=?', [$itemId, $userId])->fetch_array(MYSQLI_ASSOC);
+        $info = $this->executeQuery('SELECT emailEncrypted, allowAuth FROM usersEmails WHERE id=? and userId=?', [$itemId, $userId])->fetch_array(MYSQLI_ASSOC);
 
         return $info;
     }
@@ -179,7 +181,7 @@ WHERE authHash=unhex(?)', [$token])->fetch_array(MYSQLI_ASSOC);
 
     public function insertNewPhone(int $userId, string $phoneEncrypted, string $phoneHash, bool $allowAuth): int
     {
-        $this->executeQueryBool('INSERT INTO usersPhones(userId, phoneHash, phoneEncrypted,allowAuth) VALUES (?,unhex(?),?,?)', [$userId, $phoneHash, $phoneEncrypted, (int) $allowAuth]);
+        $this->executeQueryBool('INSERT INTO usersPhones(userId, phoneHash, phoneEncrypted, allowAuth) VALUES (?,unhex(?),?,?)', [$userId, $phoneHash, $phoneEncrypted, (int) $allowAuth]);
 
         return $this->insertId();
     }
