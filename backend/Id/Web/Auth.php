@@ -3,6 +3,7 @@
 namespace Flow\Id\Web;
 
 use Flow\Core\Web;
+use Flow\Id\Controller\AuthController;
 use Flow\Id\Storage\Storage;
 use VladViolentiy\VivaFramework\SuccessResponse;
 use Flow\Id\Enums\AuthMethods;
@@ -13,12 +14,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Auth extends Web
 {
-    private readonly \Flow\Id\Controller\AuthController $controller;
+    private readonly AuthController $controller;
 
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->controller = new \Flow\Id\Controller\AuthController(new Storage());
+        $this->controller = new AuthController(new Storage());
     }
 
     public function checkIssetClient(): Response
@@ -54,7 +55,7 @@ class Auth extends Web
         $uuid = $this->controller->createNewUser($password, $iv, $salt, $publicKey, $privateKey, $fNameEncrypted, $lNameEncrypted, $bDayEncrypted, $hash);
 
         return new JsonResponse(SuccessResponse::data([
-            'uuid' => $uuid->toString(),
+            'uuid' => $uuid->toRfc4122(),
         ]));
     }
 }

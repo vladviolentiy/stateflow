@@ -11,7 +11,8 @@
     "build-only": "vite build",
     "type-check-vue": "vue-tsc --build ",
     "type-check-ts": "tsc --build ",
-    "lint": "eslint frontend --fix"
+    "lint": "eslint frontend --fix",
+    "format": "prettier --write frontend/"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
@@ -39,6 +40,7 @@
     "npm-run-all": "^4.1.5",
     "typescript": "^5.6.3",
     "vite": "^6.0.5",
+    "prettier": "^3.3.3",
     "vue-tsc": "^2.1.10"
   }
 }

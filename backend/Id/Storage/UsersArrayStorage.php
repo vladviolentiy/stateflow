@@ -2,7 +2,7 @@
 
 namespace Flow\Id\Storage;
 
-use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Uid\Uuid;
 
 class UsersArrayStorage implements StorageInterface
 {
@@ -15,6 +15,8 @@ class UsersArrayStorage implements StorageInterface
      * @var list<array{userId:int,emailHash:non-empty-string}>
      */
     private array $usersEmail = [];
+    /** @var list<array{id: positive-int, userId: positive-int, phone: non-empty-string, phoneHash:non-empty-string, allowAuth:bool}>  */
+    private array $usersPhones = [];
 
     public function getUserByEmail(string $hashedEmail): ?array
     {
@@ -26,10 +28,10 @@ class UsersArrayStorage implements StorageInterface
         return null;
     }
 
-    public function getUserByUUID(UuidInterface $uuid): ?array
+    public function getUserByUUID(Uuid $uuid): ?array
     {
         foreach ($this->users as $key => $item) {
-            if ($uuid->toString() === $item['uuid']) {
+            if ($uuid->toRfc4122() === $item['uuid']) {
                 return [
                     'userId' => $item['id'],
                     'salt' => $item['salt'],
@@ -46,12 +48,12 @@ class UsersArrayStorage implements StorageInterface
         return false;
     }
 
-    public function insertUser(UuidInterface $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
+    public function insertUser(Uuid $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
     {
         $userId = count($this->users) + 1;
         $this->users[] = [
             'id' => $userId,
-            'uuid' => $uuid->toString(),
+            'uuid' => $uuid->toRfc4122(),
             'password' => $password,
             'iv' => $iv,
             'salt' => $salt,
@@ -117,7 +119,7 @@ class UsersArrayStorage implements StorageInterface
 
     public function getPhonesList(int $userId): array
     {
-        return [];
+        return $this->usersPhones;
     }
 
     public function deletePhone(int $userId, int $itemId): void
@@ -132,8 +134,16 @@ class UsersArrayStorage implements StorageInterface
 
     public function insertNewPhone(int $userId, string $phoneEncrypted, string $phoneHash, bool $allowAuth): int
     {
-        // TODO: Implement insertNewPhone() method.
-        return 0;
+        $id = count($this->usersPhones) + 1;
+        $this->usersPhones[] = [
+            'id' => $id,
+            'userId' => $id,
+            'phone' => $phoneEncrypted,
+            'phoneHash' => $phoneHash,
+            'allowAuth' => $allowAuth,
+        ];
+
+        return $id;
     }
 
     public function checkEmailInDatabase(string $emailHash): bool

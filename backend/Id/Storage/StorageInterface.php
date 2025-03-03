@@ -3,7 +3,7 @@
 namespace Flow\Id\Storage;
 
 use Flow\Core\Exceptions\DatabaseException;
-use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Uid\Uuid;
 
 interface StorageInterface
 {
@@ -22,16 +22,14 @@ interface StorageInterface
     public function getUserByPhone(string $hashedPhone): ?array;
 
     /**
-     * @param UuidInterface $uuid
+     * @param Uuid $uuid
      * @return array{userId:int,salt:string,iv:string}|null
      * @throws DatabaseException
      */
-    public function getUserByUUID(UuidInterface $uuid): ?array;
-
-    public function checkIssetUUID(string $uuid): bool;
+    public function getUserByUUID(Uuid $uuid): ?array;
 
     /**
-     * @param UuidInterface $uuid
+     * @param Uuid $uuid
      * @param non-empty-string $password
      * @param non-empty-string $iv
      * @param non-empty-string $salt
@@ -41,7 +39,7 @@ interface StorageInterface
      * @param non-empty-string $globalHash
      * @return positive-int
      */
-    public function insertUser(UuidInterface $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int;
+    public function insertUser(Uuid $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int;
 
     /**
      * @param positive-int $userId
@@ -124,7 +122,7 @@ interface StorageInterface
     /**
      * @param positive-int $userId
      * @param positive-int $itemId
-     * @return array{emailEncrypted:string,allowAuth:int}|null
+     * @return array{phoneEncrypted:string,allowAuth:int}|null
      * @throws DatabaseException
      */
     public function getPhoneItem(int $userId, int $itemId): ?array;

@@ -5,7 +5,7 @@ namespace Flow\Id\Storage;
 use Flow\Core\Database;
 use Flow\Core\Enums\ServicesEnum;
 use Flow\Id\Storage\Migrations\Migration;
-use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Uid\Uuid;
 use VladViolentiy\VivaFramework\Databases\MigrationV2\MysqlMigrationManager;
 use VladViolentiy\VivaFramework\Databases\MysqliV2;
 use mysqli;
@@ -36,12 +36,12 @@ WHERE emailHash=unhex(?) and allowAuth=true and deleted=false', [$hashedEmail])-
         return $info;
     }
 
-    public function getUserByUUID(UuidInterface $uuid): ?array
+    public function getUserByUUID(Uuid $uuid): ?array
     {
         /** @var array{userId:int,salt:string,iv:string}|null $info */
         $info = $this->executeQuery('SELECT id as userId,salt,iv
 FROM users
-WHERE uuid=unhex(?)', [bin2hex($uuid->getBytes())])->fetch_array(MYSQLI_ASSOC);
+WHERE uuid=unhex(?)', [$uuid->toBinary()])->fetch_array(MYSQLI_ASSOC);
         if ($info === null) {
             return null;
         }
@@ -63,21 +63,11 @@ WHERE phoneHash=unhex(?)', [$hashedPhone])->fetch_array(MYSQLI_ASSOC);
         return $info;
     }
 
-    public function checkIssetUUID(string $uuid): bool
+    public function insertUser(Uuid $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
     {
-        /** @var array<int,int> $info */
-        $info = $this->executeQuery('SELECT COUNT(*) FROM users WHERE uuid=?', [$uuid])->fetch_array();
-
-        return $info[0] > 0;
-    }
-
-    public function insertUser(UuidInterface $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
-    {
-        /** @var string $globalHash */
-        $globalHash = hex2bin($globalHash);
         $this->executeQueryBool(
-            'INSERT INTO users(uuid, password, iv, salt, fNameEncrypted, lNameEncrypted, bDayEncrypted, globalHash) VALUES(unhex(?),?,?,?,?,?,?,?)',
-            [bin2hex($uuid->getBytes()), $password, $iv, $salt, $fNameEncrypted, $lNameEncrypted, $bDayEncrypted, $globalHash],
+            'INSERT INTO users(uuid, password, iv, salt, fNameEncrypted, lNameEncrypted, bDayEncrypted, globalHash) VALUES(?,?,?,?,?,?,?,unhex(?))',
+            [$uuid->toBinary(), $password, $iv, $salt, $fNameEncrypted, $lNameEncrypted, $bDayEncrypted, $globalHash],
         );
         /** @var positive-int $insId */
         $insId = $this->insertId();
@@ -128,7 +118,7 @@ WHERE authHash=unhex(?)', [$token])->fetch_array(MYSQLI_ASSOC);
     public function getEmailList(int $userId): array
     {
         /** @var list<array{id:int,email:string}> $data */
-        $data = $this->executeQuery('SELECT id,emailEncrypted as email FROM usersEmails WHERE userId=? and deleted=false', [$userId])->fetch_all(MYSQLI_ASSOC);
+        $data = $this->executeQuery('SELECT id, emailEncrypted as email FROM usersEmails WHERE userId=? and deleted=false', [$userId])->fetch_all(MYSQLI_ASSOC);
 
         return $data;
     }
@@ -161,7 +151,7 @@ WHERE authHash=unhex(?)', [$token])->fetch_array(MYSQLI_ASSOC);
     public function getPhonesList(int $userId): array
     {
         /** @var list<array{id:int,phone:string}> $data */
-        $data = $this->executeQuery('SELECT id,phoneEncrypted as phone FROM usersPhones WHERE userId=? and deleted=false', [$userId])->fetch_all(MYSQLI_ASSOC);
+        $data = $this->executeQuery('SELECT id, phoneEncrypted as phone FROM usersPhones WHERE userId=? and deleted=false', [$userId])->fetch_all(MYSQLI_ASSOC);
 
         return $data;
     }
@@ -173,7 +163,7 @@ WHERE authHash=unhex(?)', [$token])->fetch_array(MYSQLI_ASSOC);
 
     public function getPhoneItem(int $userId, int $itemId): ?array
     {
-        /** @var array{emailEncrypted:string,allowAuth:int}|null $info */
+        /** @var array{phoneEncrypted:string,allowAuth:int}|null $info */
         $info = $this->executeQuery('SELECT phoneEncrypted,allowAuth FROM usersPhones WHERE id=? and userId=?', [$itemId, $userId])->fetch_array(MYSQLI_ASSOC);
 
         return $info;
@@ -181,7 +171,7 @@ WHERE authHash=unhex(?)', [$token])->fetch_array(MYSQLI_ASSOC);
 
     public function insertNewPhone(int $userId, string $phoneEncrypted, string $phoneHash, bool $allowAuth): int
     {
-        $this->executeQueryBool('INSERT INTO usersPhones(userId, phoneHash, phoneEncrypted, allowAuth) VALUES (?,unhex(?),?,?)', [$userId, $phoneHash, $phoneEncrypted, (int) $allowAuth]);
+        $this->executeQueryBool('INSERT INTO usersPhones(userId, phoneHash, phoneEncrypted, allowAuth) VALUES (?,unhex(?),?,?)', [$userId, $phoneHash, $phoneEncrypted, chr($allowAuth ? 1 : 0)]);
 
         return $this->insertId();
     }
@@ -213,8 +203,9 @@ WHERE emailHash=? and deleted=false', [$emailHash])->fetch_array(MYSQLI_ASSOC);
     group_concat(sM.ua) as uas,
     group_concat(sM.ip) as ips
 FROM sessions 
-    JOIN flow_id.sessionsMeta sM on sessions.id = sM.sessionId
-WHERE userId=? and expiredAt>now() group by sessions.id", [$userId])->fetch_all(MYSQLI_ASSOC);
+    JOIN sessionsMeta sM on sessions.id = sM.sessionId
+WHERE userId=? and expiredAt>now() 
+GROUP BY sessions.id", [$userId])->fetch_all(MYSQLI_ASSOC);
 
         return $i;
     }

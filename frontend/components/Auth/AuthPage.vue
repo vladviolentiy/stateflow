@@ -3,7 +3,13 @@
     <div class="container">
       <div class="row justify-content-end">
         <div class="col-6 col-md-2">
-          <select name="" id="" class="form-select form-select-sm" v-model="selectedLang" @change="setLang">
+          <select
+            name=""
+            id=""
+            class="form-select form-select-sm"
+            v-model="selectedLang"
+            @change="setLang"
+          >
             <option value="en">English</option>
             <option value="ru">Русский</option>
             <option value="by">Беларуская</option>
@@ -17,115 +23,117 @@
   <div class="row justify-content-center align-items-center" style="height: 100vh">
     <div class="col-12">
       <h4 class="text-center">Авторизация</h4>
-      <input type="text" class="form-control my-1" v-model="authString" :disabled="step!=='auth'" placeholder="Email, Телефон или Uuid">
-      <input type="password" class="form-control my-1" v-model="authPassword" v-if="step==='password'" placeholder="Введите пароль">
-      <button class="btn btn-outline-primary w-100 my-1" @click="checkPhone" v-if="step==='auth'">{{ Localization.next }}</button>
-      <button class="btn btn-outline-primary w-100 my-1" @click="passwordAuth" v-if="step==='password'">{{ Localization.enter }}</button>
-      <router-link to="/register" class="text-center btn btn-link w-100"  v-if="step==='auth'">{{ Localization.register }}</router-link>
-      <p class="text-danger text-center" v-if="authErrorCode!==null">{{Localization.errorCodes[authErrorCode]}}</p>
+      <input
+        type="text"
+        class="form-control my-1"
+        v-model="authString"
+        :disabled="step !== 'auth'"
+        placeholder="Email, Телефон или Uuid"
+      />
+      <input
+        type="password"
+        class="form-control my-1"
+        v-model="authPassword"
+        v-if="step === 'password'"
+        placeholder="Введите пароль"
+      />
+      <button class="btn btn-outline-primary w-100 my-1" @click="checkPhone" v-if="step === 'auth'">
+        {{ store.Localization.next }}
+      </button>
+      <button
+        class="btn btn-outline-primary w-100 my-1"
+        @click="passwordAuth"
+        v-if="step === 'password'"
+      >
+        {{ store.Localization.enter }}
+      </button>
+      <router-link to="/register" class="text-center btn btn-link w-100" v-if="step === 'auth'">{{
+          store.Localization.register
+      }}</router-link>
+      <p class="text-danger text-center" v-if="authErrorCode !== null">
+        {{ store.Localization.errorCodes[authErrorCode] }}
+      </p>
     </div>
   </div>
-
-
 </template>
 
-<script lang="ts">
-import {defineComponent} from "vue";
-import AuthGateway from "../../gateway/AuthGateway";
-import {appStore} from "@/stores/AppStore";
-import {mapActions, mapState} from "pinia";
-import Credentials from "../../security/Credentials";
-import Hashing from "@/security/Hashing";
-import Security from "@/security/Security";
-import type {errorCodeList} from "@/localization/CustomInterfaces";
-import Validation from "@/security/Validation";
-export default defineComponent({
-  name: "AuthPage",
-  data(){
-    return{
-      selectedLang:"ru" as 'ru'|'by'|'ua'|'en',
-      authString:"" as string,
-      authErrorCode:null as errorCodeList|null,
-      step:'auth' as 'password'|'finger'|'auth',
-      authPassword:"" as string,
-      authSalt:"" as string,
-    }
-  },
-  computed: {
-    ...mapState(appStore, ['Localization']),
-  },
-  methods:{
-    async getUserNametype():Promise<{type:'uuid'|'email'|'phone',authString:string}>{
-      let type:'phone'|'uuid'|'email' = "phone";
-      let authString = this.authString;
-      this.authErrorCode = null;
-      if(Validation.isUUID(this.authString)){
-        type = 'uuid'
-      } else if (Validation.isEmail(this.authString)){
-        type = 'email';
-        authString = await Hashing.digest(this.authString);
-      } else if(Validation.isPhone(this.authString)) {
-        authString = await Hashing.digest(this.authString);
-      } else {
-        this.authErrorCode = 5;
-        throw "5";
-      }
-      return {
-        type:type,
-        authString:authString,
-      };
-    },
-    async checkPhone(){
-      const info = await this.getUserNametype();
-      AuthGateway.preAuth(info.authString,info.type).then(response=>{
-        if(response.success){
-          this.step = 'password';
-          this.authSalt = window.atob(response.data.salt);
-        } else {
-          this.authErrorCode = response.code;
-        }
-      }).catch(response=>{
-        console.log(response)
-        this.authErrorCode = 0;
-      })
-    },
-    async passwordAuth(){
-      const info = await this.getUserNametype();
-      const passwordHash = await Hashing.digest(this.authSalt+''+this.authPassword);
-      AuthGateway.passwordAuth(info.authString,info.type,passwordHash).then(response=>{
-        if(response.success){
-          localStorage.setItem("authToken",response.data.hash);
-          localStorage.setItem("salt",response.data.salt);
-          localStorage.setItem("iv",response.data.iv);
-          localStorage.setItem("password",this.authPassword);
-          this.setNewToken(response.data.hash)
-          this.$router.push("/");
-        } else {
-          this.authErrorCode = response.code;
-        }
-      }).catch(response=>{
-        this.authErrorCode = 0;
-      })
-    },
-    async fingerPrintAuth(){
-      const result = await Credentials.create(
-          Security.getRandom(32),
-          "123-455331-213-123-12-312333",
-          "vlad",
-          "vlad"
-      );
-      console.log(result)
-      const success = await Credentials.get("333");
-      console.log(success)
-    },
-    setLang(){
-      this.setNewLang(this.selectedLang)
-    },
-    ...mapActions(appStore,['setNewLang',"setNewToken"])
+<script setup lang="ts">
+import { ref } from 'vue'
+import AuthGateway from '../../gateway/AuthGateway'
+import { appStore } from '@/stores/AppStore'
+import Hashing from '@/security/Hashing'
+import type { errorCodeList } from '@/localization/CustomInterfaces'
+import Validation from '@/security/Validation'
+import { useRouter } from 'vue-router'
+
+const selectedLang = ref<'ru' | 'by' | 'ua' | 'en'>('ru')
+const authString = ref('')
+const authErrorCode = ref<errorCodeList | null>(null)
+const step = ref<'password' | 'finger' | 'auth'>('auth')
+const authPassword = ref<string>('')
+const authSalt = ref<string>('')
+
+const store = appStore()
+const router = useRouter()
+
+async function getUserNametype(): Promise<'phone' | 'uuid' | 'email'> {
+  let type: 'phone' | 'uuid' | 'email' = 'phone'
+  authErrorCode.value = null
+  if (Validation.isUUID(authString.value)) {
+    type = 'uuid'
+  } else if (Validation.isEmail(authString.value)) {
+    type = 'email'
+    authString.value = await Hashing.digest(authString.value)
+  } else if (Validation.isPhone(authString.value)) {
+    authString.value = await Hashing.digest(authString.value)
+  } else {
+    authErrorCode.value = 5
+    throw '5'
   }
-})
+  return type;
+}
+
+async function checkPhone() {
+  const type = await getUserNametype()
+  AuthGateway.preAuth(authString.value, type)
+    .then(response => {
+      if (response.success) {
+        step.value = 'password'
+        authSalt.value = window.atob(response.data.salt)
+      } else {
+        authErrorCode.value = response.code
+      }
+    })
+    .catch(response => {
+      console.log(response)
+      authErrorCode.value = 0
+    })
+}
+async function passwordAuth() {
+  const info = await getUserNametype()
+  const passwordHash = await Hashing.digest(authSalt.value + '' + authPassword.value)
+  AuthGateway.passwordAuth(authString.value, info, passwordHash)
+    .then(response => {
+      if (response.success) {
+        localStorage.setItem('authToken', response.data.hash)
+        localStorage.setItem('salt', response.data.salt)
+        localStorage.setItem('iv', response.data.iv)
+        localStorage.setItem('password', authPassword.value)
+        store.setNewToken(response.data.hash)
+        router.push('/')
+      } else {
+        authErrorCode.value = response.code
+      }
+    })
+    .catch(() => {
+      authErrorCode.value = 0
+    })
+}
+
+function setLang() {
+  console.log('setNewLang')
+  store.setNewLang(selectedLang.value)
+}
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

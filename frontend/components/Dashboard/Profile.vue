@@ -1,34 +1,33 @@
 <template>
-  <h4>{{ Localization.profile }}</h4>
+  <h4>{{ store.Localization.profile }}</h4>
   <ul class="list-group list-group-flush">
-    <router-link to="/dashboard/profile/email" class="list-group-item">{{ Localization.configure.email }}</router-link>
-    <router-link to="/dashboard/profile/phones" class="list-group-item">{{ Localization.configure.phone }}</router-link>
-    <router-link to="/dashboard/profile/sessions" class="list-group-item">{{ Localization.configure.session }}</router-link>
-    <li class="list-group-item text-danger" @click="logOut">{{Localization.logout}}</li>
+    <router-link to="/dashboard/profile/email" class="list-group-item">{{
+        store.Localization.configure.email
+    }}</router-link>
+    <router-link to="/dashboard/profile/phones" class="list-group-item">{{
+        store.Localization.configure.phone
+    }}</router-link>
+    <router-link to="/dashboard/profile/sessions" class="list-group-item">{{
+      store.Localization.configure.session
+    }}</router-link>
+    <li class="list-group-item text-danger" @click="logOut">{{ store.Localization.logout }}</li>
   </ul>
 </template>
 
-<script lang="ts">
-import {defineComponent} from "vue";
-import AuthenticationMethods from "@/security/AuthenticationMethods";
-import {mapState} from "pinia";
-import {appStore} from "@/stores/AppStore";
-export default defineComponent({
-  name: "DashboardProfile",
-  methods:{
-    logOut():void{
-      const token = localStorage.getItem("authToken")??"";
-      this.DashboardGateway.killSession(token,false);
-      AuthenticationMethods.logOut();
-      this.$router.push("/auth");
-    }
-  },
-  computed:{
-    ...mapState(appStore, ['Localization',"DashboardGateway"]),
-  },
-})
+<script setup lang="ts">
+import AuthenticationMethods from '@/security/AuthenticationMethods'
+import {useRouter} from "vue-router";
+import {appStore} from "@/stores/AppStore.ts";
+
+const store = appStore();
+const route = useRouter();
+
+function logOut(): void {
+  const token = localStorage.getItem('authToken') ?? ''
+  store.DashboardGateway.killSession(token, false)
+  AuthenticationMethods.logOut()
+  route.push('/auth')
+}
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
