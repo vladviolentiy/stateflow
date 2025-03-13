@@ -3,11 +3,9 @@
 </template>
 
 <script setup lang="ts">
-
-import {appStore} from "@/stores/AppStore.ts";
+import { appStore } from '@/stores/AppStore.ts'
 
 const store = appStore()
-
 </script>
 
 <style scoped></style>

@@ -23,11 +23,11 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      component: () => import('./components/Dashboard.vue'),
+      component: () => import('./components/DashboardComponent.vue'),
       children: [
         {
           path: '',
-          component: () => import('./components/Dashboard/Home.vue')
+          component: () => import('./components/Dashboard/HomeDashboard.vue')
         },
         {
           path: 'profile',
@@ -35,7 +35,7 @@ const router = createRouter({
           children: [
             {
               path: '',
-              component: () => import('./components/Dashboard/Profile.vue')
+              component: () => import('./components/Dashboard/ProfileDashboard.vue')
             },
             {
               path: 'email',
@@ -53,7 +53,7 @@ const router = createRouter({
         },
         {
           path: 'services',
-          component: () => import('./components/Dashboard/Services.vue')
+          component: () => import('./components/Dashboard/ServicesDashboard.vue')
         }
       ]
     }

@@ -2,10 +2,14 @@ import type { LocalizationInterface } from './LocalizationInterface'
 
 const LocalizationEn: LocalizationInterface = {
   register: 'Register',
+  authentication: 'Authentication',
   logout: 'Log out',
   enter: 'Sign in',
+  enterAuthString: 'Email, phone or uuid',
+  enterPassword: 'Enter password',
   next: 'Next',
   delete: 'Delete',
+  close: 'Close',
   add: 'Add',
   edit: 'Edit',
   validation: {

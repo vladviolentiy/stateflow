@@ -2,10 +2,14 @@ import type { LocalizationInterface } from './LocalizationInterface'
 
 const LocalizationRu: LocalizationInterface = {
   register: 'Регистрация',
+  authentication: 'Авторизация',
   logout: 'Выйти из системы',
+  enterAuthString: 'Email, телефон или uuid',
+  enterPassword: 'Введите пароль',
   enter: 'Войти',
   delete: 'Удалить',
   next: 'Далее',
+  close: 'Закрыть',
   add: 'Добавить',
   edit: 'Редактировать',
   validation: {

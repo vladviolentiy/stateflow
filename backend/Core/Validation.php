@@ -23,16 +23,16 @@ $keyInput
         }
         $publicKey = openssl_get_publickey($keyInput);
         if (!$publicKey) {
-            throw new ValidationException();
+            throw new ValidationException('Invalid public key');
         }
 
         // Extract the key details
         $details = openssl_pkey_get_details($publicKey);
         if (!$details) {
-            throw new ValidationException();
+            throw new ValidationException('Invalid public key');
         }
         if ($details['type'] !== OPENSSL_KEYTYPE_RSA) {
-            throw new ValidationException();
+            throw new ValidationException('Provided data is not a RSA');
         }
 
         return true;
@@ -48,19 +48,19 @@ $keyInput
         }
 
         $strlen = strlen($decodedData);
-        if ($strlen % 16 !== 0) {
+        if ($strlen % 16 !== 0 || $strlen === 0) {
             throw new ValidationException('Invalid encrypted data');
         }
         /** @var array<string,positive-int> $freq */
         $freq = array_count_values(str_split($decodedData));
         $self = new self();
         $entropy = $self->calculateEntropy($freq, $strlen);
-        $asciiStat = $self->check_ascii($decodedData);
 
         $log = log(count($freq), 2);
         if ($log == 0 || $entropy === 0.0 || $entropy < $log * 0.9) {
             throw new ValidationException('Bad encrypted data');
         }
+        $asciiStat = $self->check_ascii($decodedData);
         if ($asciiStat > 0.38) {
             throw new ValidationException('Bad encrypted data (ascii');
         }
@@ -84,12 +84,11 @@ $keyInput
 
     /**
      * @param array<string,int> $frequencies
-     * @param int $length
+     * @param positive-int $length
      * @return float
      */
     private function calculateEntropy(array $frequencies, int $length): float
     {
-
         $entropy = 0.0;
         foreach ($frequencies as $count) {
             $probability = $count / $length;

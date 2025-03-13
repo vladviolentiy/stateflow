@@ -2,15 +2,19 @@ import type { LocalizationInterface } from './LocalizationInterface'
 
 const LocalizationUa: LocalizationInterface = {
   register: 'Реєстрація',
+  authentication: 'Авторизація',
   logout: 'Вийти з системи',
   enter: 'Увійти',
   delete: 'Видалити',
+  enterAuthString: 'Email, телефон або uuid',
+  enterPassword: 'Введите пароль',
   add: 'Додати',
+  close: 'Закрити',
   next: 'Далі',
   edit: 'Редагувати',
   validation: {
     fNameNull: "Ім'я не введено",
-    lNameNull: 'прізвище не введено',
+    lNameNull: 'Прізвище не введено',
     dobNull: 'Дата народження не введена',
     emailNull: 'EmailController не введено',
     phoneNull: 'Телефон не введений',

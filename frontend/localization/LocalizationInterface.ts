@@ -1,15 +1,19 @@
 import type { errorCodeList } from './CustomInterfaces'
 
-type countryCodes = 'ru' | 'by' | 'ua' | 'en';
+type CountryCode = 'ru' | 'by' | 'ua' | 'en'
 
 interface LocalizationInterface {
   register: string
+  authentication: string
   logout: string
+  enterAuthString: string
+  enterPassword: string
   enter: string
   next: string
   delete: string
   add: string
   edit: string
+  close: string
   validation: {
     fNameNull: string
     lNameNull: string
@@ -43,4 +47,4 @@ interface LocalizationInterface {
   errorCodes: Record<errorCodeList, string>
 }
 
-export type { LocalizationInterface, countryCodes }
+export type { LocalizationInterface, CountryCode }

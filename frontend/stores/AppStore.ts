@@ -1,36 +1,33 @@
 import { defineStore } from 'pinia'
-import type { LocalizationInterface } from '../localization/LocalizationInterface'
+import type { CountryCode, LocalizationInterface } from '../localization/LocalizationInterface'
 import LocalizationRu from '../localization/LocalizationRu'
-import LocalizationUa from '../localization/LocalizationUa'
-import LocalizationBy from '../localization/LocalizationBy'
 import DashboardGateway from '@/gateway/DashboardGateway'
-import LocalizationEn from '@/localization/LocalizationEn'
 
 export const appStore = defineStore('App', {
   state: () => {
     return {
       Localization: LocalizationRu as LocalizationInterface,
-      CurrentLocalization: 'ru' as 'ru' | 'ua' | 'by' | 'en',
+      CurrentLocalization: 'ru' as CountryCode,
       DashboardGateway: new DashboardGateway(
         localStorage.getItem('authToken') ?? ''
       ) as DashboardGateway
     }
   },
   actions: {
-    setNewLang(lang: 'ru' | 'ua' | 'by' | 'en'): void {
+    async setNewLang(lang: CountryCode): Promise<void> {
       this.CurrentLocalization = lang
       switch (lang) {
         case 'ru':
           this.Localization = LocalizationRu
           break
         case 'en':
-          this.Localization = LocalizationEn
+          this.Localization = (await import('../localization/LocalizationEn')).default
           break
         case 'by':
-          this.Localization = LocalizationBy
+          this.Localization = (await import('../localization/LocalizationBy')).default
           break
         case 'ua':
-          this.Localization = LocalizationUa
+          this.Localization = (await import('../localization/LocalizationUa')).default
           break
       }
     },

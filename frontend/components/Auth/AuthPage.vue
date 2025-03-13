@@ -22,20 +22,20 @@
 
   <div class="row justify-content-center align-items-center" style="height: 100vh">
     <div class="col-12">
-      <h4 class="text-center">Авторизация</h4>
+      <h4 class="text-center">{{ store.Localization.authentication }}</h4>
       <input
         type="text"
         class="form-control my-1"
         v-model="authString"
         :disabled="step !== 'auth'"
-        placeholder="Email, Телефон или Uuid"
+        :placeholder="store.Localization.enterAuthString"
       />
       <input
         type="password"
         class="form-control my-1"
         v-model="authPassword"
         v-if="step === 'password'"
-        placeholder="Введите пароль"
+        :placeholder="store.Localization.enterPassword"
       />
       <button class="btn btn-outline-primary w-100 my-1" @click="checkPhone" v-if="step === 'auth'">
         {{ store.Localization.next }}
@@ -48,7 +48,7 @@
         {{ store.Localization.enter }}
       </button>
       <router-link to="/register" class="text-center btn btn-link w-100" v-if="step === 'auth'">{{
-          store.Localization.register
+        store.Localization.register
       }}</router-link>
       <p class="text-danger text-center" v-if="authErrorCode !== null">
         {{ store.Localization.errorCodes[authErrorCode] }}
@@ -65,8 +65,9 @@ import Hashing from '@/security/Hashing'
 import type { errorCodeList } from '@/localization/CustomInterfaces'
 import Validation from '@/security/Validation'
 import { useRouter } from 'vue-router'
+import type { CountryCode } from '@/localization/LocalizationInterface.ts'
 
-const selectedLang = ref<'ru' | 'by' | 'ua' | 'en'>('ru')
+const selectedLang = ref<CountryCode>('ru')
 const authString = ref('')
 const authErrorCode = ref<errorCodeList | null>(null)
 const step = ref<'password' | 'finger' | 'auth'>('auth')
@@ -90,7 +91,7 @@ async function getUserNametype(): Promise<'phone' | 'uuid' | 'email'> {
     authErrorCode.value = 5
     throw '5'
   }
-  return type;
+  return type
 }
 
 async function checkPhone() {

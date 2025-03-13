@@ -1,7 +1,7 @@
 <template>
   <h4>Сессии</h4>
   <div class="row" v-if="list.length > 0">
-    <div class="col-md-4" v-for="item in list">
+    <div class="col-md-4" v-for="item in list" :key="item.authHash">
       <div class="card w-100">
         <div class="card-body">
           <h5 class="card-title">
@@ -25,76 +25,68 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import Encryption from '@/security/Encryption'
-import Security from '@/security/Security'
-import { mapState } from 'pinia'
-import { appStore } from '@/stores/AppStore'
-import type {
-  sessionListResponseItem
-} from '@/gateway/Interfaces/DashboardGatewayIntefaces'
-export default defineComponent({
-  name: 'SessionConfigure',
-  data() {
-    return {
-      list: [] as sessionListResponseItem[],
-      cryptoKey: null as null | CryptoKey
-    }
-  },
-  async mounted() {
-    this.cryptoKey = await Security.getDerivedKey()
+<script setup lang="ts">
 
-    const response = await this.DashboardGateway.getSessionsList()
-    if (response.success) {
-      await this.remapListElements(response.data)
-    }
-  },
-  computed: {
-    currentSession(): string {
-      return localStorage.getItem('authToken') ?? ''.toLowerCase()
-    },
-    ...mapState(appStore, ['DashboardGateway', 'Localization'])
-  },
-  methods: {
-    async remapListElements(response: sessionListResponseItem[]) {
-      const iv = localStorage.getItem('iv') ?? ''
-      console.log(response)
-      this.list = await Promise.all(
-        response.map(async item => {
-          if (this.cryptoKey !== null) {
-            item.uas = await Promise.all(
+import {appStore} from "@/stores/AppStore.ts";
+import type {sessionListResponseItem} from "@/gateway/Interfaces/DashboardGatewayIntefaces.ts";
+import {computed, onMounted, ref} from "vue";
+import Security from "@/security/Security.ts";
+import Encryption from "@/security/Encryption.ts";
+
+const store = appStore();
+const list = ref<sessionListResponseItem[]>([]);
+const cryptoKey = ref<CryptoKey|null>(null)
+
+onMounted(async function () {
+  cryptoKey.value = await Security.getDerivedKey()
+
+  const response = await store.DashboardGateway.getSessionsList()
+  if (response.success) {
+    remapListElements(response.data)
+  }
+})
+
+const currentSession = computed(()=>{
+  return localStorage.getItem('authToken') ?? ''.toLowerCase()
+});
+
+async function remapListElements(response: sessionListResponseItem[]) {
+  const iv = localStorage.getItem('iv') ?? ''
+  console.log(response)
+  list.value = await Promise.all(
+      response.map(async item => {
+        if (cryptoKey.value !== null) {
+          item.uas = await Promise.all(
               item.uas.map(async itemUa => {
-                if (this.cryptoKey !== null) {
-                  itemUa = await Encryption.decryptAES(itemUa, this.cryptoKey, iv)
+                if (cryptoKey.value !== null) {
+                  itemUa = await Encryption.decryptAES(itemUa, cryptoKey.value, iv)
                 }
                 return itemUa
               })
-            )
-            item.ips = await Promise.all(
+          )
+          item.ips = await Promise.all(
               item.ips.map(async itemIp => {
-                if (this.cryptoKey !== null) {
-                  itemIp = await Encryption.decryptAES(itemIp, this.cryptoKey, iv)
+                if (cryptoKey.value !== null) {
+                  itemIp = await Encryption.decryptAES(itemIp, cryptoKey.value, iv)
                 }
                 return itemIp
               })
-            )
-          }
-
-          return item
-        })
-      )
-      console.log(this.list)
-    },
-    killSession(hash: string): void {
-      this.DashboardGateway.killSession(hash, true).then(response => {
-        if (response.success) {
-          this.remapListElements(response.data)
+          )
         }
+
+        return item
       })
+  )
+  console.log(list.value)
+}
+
+function killSession(hash: string): void {
+  store.DashboardGateway.killSession(hash, true).then(response => {
+    if (response.success) {
+      remapListElements(response.data)
     }
-  }
-})
+  })
+}
 </script>
 
 <style scoped></style>

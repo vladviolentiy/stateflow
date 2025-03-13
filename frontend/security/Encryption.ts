@@ -105,19 +105,19 @@ class Encryption {
   }
 
   public async exportPrivateKey(privateKey: CryptoKey): Promise<ArrayBuffer> {
-      return await window.crypto.subtle.exportKey('pkcs8', privateKey)
+    return await window.crypto.subtle.exportKey('pkcs8', privateKey)
   }
 
   public async importPublicKey(publicKey: string): Promise<CryptoKey> {
-      return await window.crypto.subtle.importKey(
-        'spki',
-        Security.str2ab(window.atob(publicKey)),
-        {
-            name: 'RSA-OAEP',
-            hash: 'SHA-256'
-        },
-        true,
-        ['encrypt']
+    return await window.crypto.subtle.importKey(
+      'spki',
+      Security.str2ab(window.atob(publicKey)),
+      {
+        name: 'RSA-OAEP',
+        hash: 'SHA-256'
+      },
+      true,
+      ['encrypt']
     )
   }
 }

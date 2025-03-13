@@ -7,7 +7,6 @@ use Flow\Tests\Feature\DbFunctions;
 use mysqli;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Dotenv\Dotenv;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Symfony\Component\Uid\Uuid;
 use VladViolentiy\VivaFramework\Random;
 
@@ -26,17 +25,9 @@ class StorageTest extends TestCase
 
     protected function setUp(): void
     {
-        try {
-            $dotenv = new Dotenv();
-            $dotenv->usePutenv()->loadEnv(__DIR__ . '/../../../../.env');
-            $server = (string) getenv('DB_TEST_SERVER');
-            if (empty($server)) {
-                throw new PathException('');
-            }
-        } catch (PathException $e) {
-            $this->markTestSkipped('Feature test not configured');
-        }
 
+        $dotenv = new Dotenv();
+        $dotenv->usePutenv()->loadEnv(__DIR__ . '/../../../../.env');
 
         $this->conn = new mysqli(
             (string) getenv('DB_TEST_SERVER'),

@@ -1,6 +1,8 @@
+import type { CountryCode } from '@/localization/LocalizationInterface.ts'
+
 interface checkAuthResponse {
   userId: number
-  lang: 'ru' | 'ua' | 'by' | 'en'
+  lang: CountryCode
   ip: string
   ua: string
   acceptEncoding: string
