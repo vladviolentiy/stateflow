@@ -16,9 +16,9 @@ const LocalizationEn: LocalizationInterface = {
     fNameNull: 'First name is not entered',
     lNameNull: 'Surname not entered',
     dobNull: 'Date of birth not entered',
-    emailNull: 'EmailController not entered',
+    emailNull: 'Email not entered',
     phoneNull: 'Phone not entered',
-    emailIncorrect: 'EmailController entered incorrectly',
+    emailIncorrect: 'Email entered incorrectly',
     phoneIncorrect: 'Phone entered incorrectly',
     dobIncorrect: 'Date of birth entered incorrectly',
     passwordNotRepeat: "Passwords don't match",
@@ -40,7 +40,7 @@ const LocalizationEn: LocalizationInterface = {
   },
   email: {
     add: 'Add an email',
-    notAdded: 'EmailController addresses have not been added'
+    notAdded: 'Email addresses have not been added'
   },
   errorCodes: {
     0: 'Network error',

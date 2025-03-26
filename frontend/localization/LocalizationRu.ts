@@ -16,9 +16,9 @@ const LocalizationRu: LocalizationInterface = {
     fNameNull: 'Имя не введено',
     lNameNull: 'Фамилия не введена',
     dobNull: 'Дата рождения не введена',
-    emailNull: 'EmailController не введен',
+    emailNull: 'Email не введен',
     phoneNull: 'Телефон не введен',
-    emailIncorrect: 'EmailController введен некорректно',
+    emailIncorrect: 'Email введен некорректно',
     phoneIncorrect: 'Телефон введен некорректно',
     dobIncorrect: 'Дата рождения введена некорректно',
     passwordNull: 'Пароль не введён',
@@ -40,7 +40,7 @@ const LocalizationRu: LocalizationInterface = {
   },
   email: {
     add: 'Добавить email',
-    notAdded: 'EmailController адреса не добавлены'
+    notAdded: 'Email адреса не добавлены'
   },
   errorCodes: {
     0: 'Ошибка сети',

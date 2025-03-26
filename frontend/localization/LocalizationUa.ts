@@ -16,9 +16,9 @@ const LocalizationUa: LocalizationInterface = {
     fNameNull: "Ім'я не введено",
     lNameNull: 'Прізвище не введено',
     dobNull: 'Дата народження не введена',
-    emailNull: 'EmailController не введено',
+    emailNull: 'Email не введено',
     phoneNull: 'Телефон не введений',
-    emailIncorrect: 'EmailController введено некоректно',
+    emailIncorrect: 'Email введено некоректно',
     phoneIncorrect: ' Телефон введено некоректно',
     dobIncorrect: 'Дата народження введена некоректно',
     passwordNotRepeat: 'Паролі не співпадають',
@@ -40,7 +40,7 @@ const LocalizationUa: LocalizationInterface = {
   },
   email: {
     add: 'Додати email',
-    notAdded: 'EmailController адреси не додані'
+    notAdded: 'Email адреси не додані'
   },
   errorCodes: {
     0: 'Помилка мережі',
