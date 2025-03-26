@@ -7,6 +7,9 @@ use VladViolentiy\VivaFramework\Validation;
 
 final class EncryptedData implements ValidationInterface
 {
+    private const float ASCII_THRESHOLD = 0.38;
+    private const float ENTROPY_THRESHOLD = 0.9;
+
     public function validate(string $input): true
     {
         Validation::nonEmpty($input, 'Input data is empty');
@@ -22,11 +25,11 @@ final class EncryptedData implements ValidationInterface
         $entropy = $this->calculateEntropy($freq, $strlen);
 
         $log = log(count($freq), 2);
-        if ($log == 0 || $entropy === 0.0 || $entropy < $log * 0.9) {
+        if ($log == 0 || $entropy === 0.0 || $entropy < $log * self::ENTROPY_THRESHOLD) {
             throw new ValidationException('Bad encrypted data');
         }
         $asciiStat = $this->check_ascii($decodedData, $strlen);
-        if ($asciiStat > 0.38) {
+        if ($asciiStat > self::ASCII_THRESHOLD) {
             throw new ValidationException('Bad encrypted data (ascii');
         }
 
