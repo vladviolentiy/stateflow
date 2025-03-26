@@ -49,6 +49,7 @@ final class EncryptedData implements ValidationInterface
                 $ascii_count++;
             }
         }
+
         return $ascii_count / $length;
     }
 
