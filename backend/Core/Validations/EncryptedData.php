@@ -9,26 +9,25 @@ final class EncryptedData implements ValidationInterface
 {
     public function validate(string $input): true
     {
-        Validation::nonEmpty($input);
+        Validation::nonEmpty($input, 'Input data is empty');
 
         $decodedData = base64_decode($input, true);
-        if ($decodedData === false) {
+        if (empty($decodedData)) {
             throw new ValidationException('Invalid base64 data');
         }
 
         $strlen = strlen($decodedData);
-        if ($strlen % 16 !== 0 || $strlen === 0) {
+        if ($strlen % 16 !== 0) {
             throw new ValidationException('Invalid encrypted data');
         }
-        /** @var array<string,positive-int> $freq */
-        $freq = array_count_values(str_split($decodedData));
+        $freq = count_chars($decodedData, 1);
         $entropy = $this->calculateEntropy($freq, $strlen);
 
         $log = log(count($freq), 2);
         if ($log == 0 || $entropy === 0.0 || $entropy < $log * 0.9) {
             throw new ValidationException('Bad encrypted data');
         }
-        $asciiStat = $this->check_ascii($decodedData);
+        $asciiStat = $this->check_ascii($decodedData, $strlen);
         if ($asciiStat > 0.38) {
             throw new ValidationException('Bad encrypted data (ascii');
         }
@@ -36,22 +35,25 @@ final class EncryptedData implements ValidationInterface
         return true;
     }
 
-    private function check_ascii(string $decoded_string): float
+    /**
+     * @param non-empty-string $decoded_string
+     * @param positive-int $length
+     * @return float
+     */
+    private function check_ascii(string $decoded_string, int $length): float
     {
         $ascii_count = 0;
-        for ($i = 0; $i < strlen($decoded_string); $i++) {
+        for ($i = 0; $i < $length; $i++) {
             $char = ord($decoded_string[$i]);
             if ($char >= 32 && $char <= 126) { // ASCII-символы
                 $ascii_count++;
             }
         }
-        $ascii_ratio = $ascii_count / strlen($decoded_string);
-
-        return $ascii_ratio;
+        return $ascii_count / $length;
     }
 
     /**
-     * @param array<string,int> $frequencies
+     * @param array<int> $frequencies
      * @param positive-int $length
      * @return float
      */
