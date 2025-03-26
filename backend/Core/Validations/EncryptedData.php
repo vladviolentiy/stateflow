@@ -10,12 +10,10 @@ final class EncryptedData implements ValidationInterface
     public function validate(string $input): true
     {
         Validation::nonEmpty($input, 'Input data is empty');
-
         $decodedData = base64_decode($input, true);
         if (empty($decodedData)) {
             throw new ValidationException('Invalid base64 data');
         }
-
         $strlen = strlen($decodedData);
         if ($strlen % 16 !== 0) {
             throw new ValidationException('Invalid encrypted data');
