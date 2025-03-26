@@ -3,17 +3,10 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Dotenv\Command\DotenvDumpCommand;
 
 $application = new Application();
 
-$application->register('check-storage-params')
-    ->setCode(function (InputInterface $input, OutputInterface $output): int {
-        $storageSecurity = new \Flow\Tests\Custom\StorageSecurity();
-        $storageSecurity->storageQueryTest();
-        return Command::SUCCESS;
-    });
+$application->addCommands([new DotenvDumpCommand(__DIR__, '.env')]);
 
 $application->run();
