@@ -2,10 +2,17 @@
 
 namespace Flow\Core;
 
+use Flow\Core\Enums\ValidatorEnum;
+use Flow\Core\Validations\EncryptedData;
+use Flow\Core\Validations\RsaPublicKey;
+use Flow\Core\Validations\ValidationInterface;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 
 class Validation
 {
+    /** @var array<string, ValidationInterface>  */
+    private static array $objects = [];
+
     /**
      * @param string $keyInput
      * @return bool
@@ -14,87 +21,21 @@ class Validation
      */
     public static function RSAPublicKey(string $keyInput): bool
     {
-        if (!str_starts_with($keyInput, '-----BEGIN PUBLIC KEY-----')) {
-            $keyInput = "
------BEGIN PUBLIC KEY-----
-$keyInput
------END PUBLIC KEY-----
-";
-        }
-        $publicKey = openssl_get_publickey($keyInput);
-        if (!$publicKey) {
-            throw new ValidationException('Invalid public key');
+        $value = ValidatorEnum::RSAKey->value;
+        if (!isset(self::$objects[$value])) {
+            self::$objects[$value] = new RsaPublicKey();
         }
 
-        // Extract the key details
-        $details = openssl_pkey_get_details($publicKey);
-        if (!$details) {
-            throw new ValidationException('Invalid public key');
-        }
-        if ($details['type'] !== OPENSSL_KEYTYPE_RSA) {
-            throw new ValidationException('Provided data is not a RSA');
-        }
-
-        return true;
+        return self::$objects[$value]->validate($keyInput);
     }
 
     public static function encryptedData(string $data): bool
     {
-        \VladViolentiy\VivaFramework\Validation::nonEmpty($data);
-
-        $decodedData = base64_decode($data, true);
-        if ($decodedData === false) {
-            throw new ValidationException('Invalid base64 data');
+        $value = ValidatorEnum::EncryptedData->value;
+        if (!isset(self::$objects[$value])) {
+            self::$objects[$value] = new EncryptedData();
         }
 
-        $strlen = strlen($decodedData);
-        if ($strlen % 16 !== 0 || $strlen === 0) {
-            throw new ValidationException('Invalid encrypted data');
-        }
-        /** @var array<string,positive-int> $freq */
-        $freq = array_count_values(str_split($decodedData));
-        $self = new self();
-        $entropy = $self->calculateEntropy($freq, $strlen);
-
-        $log = log(count($freq), 2);
-        if ($log == 0 || $entropy === 0.0 || $entropy < $log * 0.9) {
-            throw new ValidationException('Bad encrypted data');
-        }
-        $asciiStat = $self->check_ascii($decodedData);
-        if ($asciiStat > 0.38) {
-            throw new ValidationException('Bad encrypted data (ascii');
-        }
-
-        return true;
-    }
-
-    private function check_ascii(string $decoded_string): float
-    {
-        $ascii_count = 0;
-        for ($i = 0; $i < strlen($decoded_string); $i++) {
-            $char = ord($decoded_string[$i]);
-            if ($char >= 32 && $char <= 126) { // ASCII-символы
-                $ascii_count++;
-            }
-        }
-        $ascii_ratio = $ascii_count / strlen($decoded_string);
-
-        return $ascii_ratio;
-    }
-
-    /**
-     * @param array<string,int> $frequencies
-     * @param positive-int $length
-     * @return float
-     */
-    private function calculateEntropy(array $frequencies, int $length): float
-    {
-        $entropy = 0.0;
-        foreach ($frequencies as $count) {
-            $probability = $count / $length;
-            $entropy -= $probability * log($probability, 2); // Формула энтропии
-        }
-
-        return $entropy;
+        return self::$objects[$value]->validate($data);
     }
 }
