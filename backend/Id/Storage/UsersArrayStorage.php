@@ -7,12 +7,11 @@ use Symfony\Component\Uid\Uuid;
 class UsersArrayStorage implements StorageInterface
 {
     /**
-     * @var list<array{id:int,uuid:string,salt:string,iv:string}>
+     * @var list<array{id:int, uuid:string, salt:string, iv:string, password: non-empty-string}>
      */
     private array $users = [];
-
     /**
-     * @var list<array{userId:int,emailHash:non-empty-string}>
+     * @var list<array{userId:int, emailHash:non-empty-string}>
      */
     private array $usersEmail = [];
     /** @var list<array{id: positive-int, userId: positive-int, phone: non-empty-string, phoneHash:non-empty-string, allowAuth:bool}>  */
@@ -30,9 +29,10 @@ class UsersArrayStorage implements StorageInterface
 
     public function getUserByUUID(Uuid $uuid): ?array
     {
-        foreach ($this->users as $key => $item) {
+        foreach ($this->users as $item) {
             if ($uuid->toRfc4122() === $item['uuid']) {
                 return [
+                    'password' => $item['password'],
                     'userId' => $item['id'],
                     'salt' => $item['salt'],
                     'iv' => $item['iv'],
@@ -75,11 +75,6 @@ class UsersArrayStorage implements StorageInterface
         //            "private"=>$encryptedPrivateKey,
         //            "public"=>$publicKey
         //        ];
-    }
-
-    public function getPasswordForUser(int $userId): ?string
-    {
-        return 'test';
     }
 
     public function insertSession(string $hash, int $userId): void

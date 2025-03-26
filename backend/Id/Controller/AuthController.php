@@ -69,7 +69,7 @@ class AuthController extends BaseController
     /**
      * @param string $userInfo
      * @param AuthMethods $authTypesEnum
-     * @return array{userId:int,salt:string,iv:string}
+     * @return array{userId:int, salt:string, iv:string, password:string}
      * @throws NotfoundException
      * @throws ValidationException
      * @throws DatabaseException
@@ -97,13 +97,14 @@ class AuthController extends BaseController
     /**
      * @param string $userInfo
      * @param AuthMethods $authTypesEnum
-     * @return array{salt:string,iv:string}
+     * @return array{salt:string, iv:string}
      * @throws NotfoundException
      */
     public function getAuthDataForUser(string $userInfo, AuthMethods $authTypesEnum): array
     {
         $userInfo = $this->getUserInfoAuth($userInfo, $authTypesEnum);
         unset($userInfo['userId']);
+        unset($userInfo['password']);
 
         return $userInfo;
     }
@@ -174,18 +175,15 @@ class AuthController extends BaseController
      */
     public function auth(string $userInfo, AuthMethods $authTypesEnum, AuthVia $authVia, string $authString): array
     {
-        $userInfo = $this->getUserInfoAuth($userInfo, $authTypesEnum);
-        if ($authString === '') {
-            throw new ValidationException();
+        Validation::nonEmpty($authString);
+
+        if ($authVia !== AuthVia::Password) {
+            throw new AuthenticationException();
         }
-        if ($authVia == AuthVia::Password) {
-            $passwordHash = $this->storage->getPasswordForUser($userInfo['userId']);
-            if ($passwordHash === null) {
-                throw new ValidationException();
-            }
-            if (!password_verify($authString, $passwordHash)) {
-                throw new IncorrectPasswordException();
-            }
+
+        $userInfo = $this->getUserInfoAuth($userInfo, $authTypesEnum);
+        if (!password_verify($authString, $userInfo['password'])) {
+            throw new IncorrectPasswordException();
         }
         $hash = Random::hash(Random::get());
         $this->storage->insertSession($hash, $userInfo['userId']);

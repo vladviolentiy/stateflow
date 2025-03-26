@@ -23,5 +23,6 @@ abstract class Migration extends MysqliV2 implements MigrationInterfaceV2
         Migration_0001::class,
         Migration_0002::class,
         Migration_0003::class,
+        Migration_0004::class,
     ];
 }

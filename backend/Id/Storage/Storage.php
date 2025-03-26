@@ -24,7 +24,7 @@ class Storage extends MysqliV2 implements StorageInterface
 
     public function getUserByEmail(string $hashedEmail): ?array
     {
-        /** @var array{userId:int,salt:string,iv:string}|null $info */
+        /** @var array{userId:int, salt:string, iv:string, password:string}|null $info */
         $info = $this->executeQuery('SELECT u.id as userId, salt, iv
 FROM usersEmails 
     JOIN users u on usersEmails.userId = u.id
@@ -38,8 +38,8 @@ WHERE emailHash=unhex(?) and allowAuth=true and deleted=false', [$hashedEmail])-
 
     public function getUserByUUID(Uuid $uuid): ?array
     {
-        /** @var array{userId:int,salt:string,iv:string}|null $info */
-        $info = $this->executeQuery('SELECT id as userId,salt,iv
+        /** @var array{userId:int, salt:string, iv:string, password:string}|null $info */
+        $info = $this->executeQuery('SELECT id as userId, salt, iv, password
 FROM users
 WHERE uuid=unhex(?)', [$uuid->toBinary()])->fetch_array(MYSQLI_ASSOC);
         if ($info === null) {
@@ -51,8 +51,8 @@ WHERE uuid=unhex(?)', [$uuid->toBinary()])->fetch_array(MYSQLI_ASSOC);
 
     public function getUserByPhone(string $hashedPhone): ?array
     {
-        /** @var array{userId:int,salt:string,iv:string}|null $info */
-        $info = $this->executeQuery('SELECT users.id as userId,salt,iv
+        /** @var array{userId:int, salt:string, iv:string, password:string}|null $info */
+        $info = $this->executeQuery('SELECT users.id as userId,salt,iv, password
 FROM users
     JOIN usersPhones uP on users.id = uP.userId
 WHERE phoneHash=unhex(?)', [$hashedPhone])->fetch_array(MYSQLI_ASSOC);
@@ -81,19 +81,6 @@ WHERE phoneHash=unhex(?)', [$hashedPhone])->fetch_array(MYSQLI_ASSOC);
             'INSERT INTO usersEncryptInfo(userId, publicKey, encryptedPrivateKey) VALUES(?,?,?)',
             [$userId, $publicKey, $encryptedPrivateKey],
         );
-    }
-
-    public function getPasswordForUser(int $userId): ?string
-    {
-        /** @var array{password:non-empty-string}|null $info */
-        $info = $this->executeQuery('SELECT password
-FROM users
-WHERE id=?', [$userId])->fetch_array(MYSQLI_ASSOC);
-        if ($info === null) {
-            return null;
-        }
-
-        return $info['password'];
     }
 
     public function checkIssetToken(string $token): ?array

@@ -9,21 +9,21 @@ interface StorageInterface
 {
     /**
      * @param non-empty-string $hashedEmail
-     * @return array{userId:int,salt:string,iv:string}|null
+     * @return array{userId:int, salt:string, iv:string, password:string}|null
      * @throws DatabaseException
      */
     public function getUserByEmail(string $hashedEmail): ?array;
 
     /**
      * @param non-empty-string $hashedPhone
-     * @return array{userId:int,salt:string,iv:string}|null
+     * @return array{userId:int,salt:string,iv:string, password:string}|null
      * @throws DatabaseException
      */
     public function getUserByPhone(string $hashedPhone): ?array;
 
     /**
      * @param Uuid $uuid
-     * @return array{userId:int,salt:string,iv:string}|null
+     * @return array{userId:int,salt:string,iv:string, password:string}|null
      * @throws DatabaseException
      */
     public function getUserByUUID(Uuid $uuid): ?array;
@@ -48,12 +48,6 @@ interface StorageInterface
      * @return void
      */
     public function insertNewEncryptInfo(int $userId, string $publicKey, string $encryptedPrivateKey): void;
-
-    /**
-     * @param int $userId
-     * @return non-empty-string|null
-     */
-    public function getPasswordForUser(int $userId): ?string;
 
     /**
      * @param non-empty-string $hash

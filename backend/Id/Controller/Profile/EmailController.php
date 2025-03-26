@@ -3,8 +3,8 @@
 namespace Flow\Id\Controller\Profile;
 
 use Flow\Core\Exceptions\DatabaseException;
-use Flow\Core\Exceptions\NotfoundException;
 use Flow\Id\Controller\AuthenticateBaseController;
+use VladViolentiy\VivaFramework\Exceptions\NotfoundException;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 use VladViolentiy\VivaFramework\Validation;
 
@@ -55,7 +55,6 @@ class EmailController extends AuthenticateBaseController
 
         $emailHash = hash('sha384', $this->appToken . $emailHash);
 
-
         $this->storage->editEmailItem($itemId, $this->userId, $emailEncrypted, $emailHash, $allowAuth);
     }
 
@@ -68,7 +67,6 @@ class EmailController extends AuthenticateBaseController
     public function getEmailItem(int $itemId): array
     {
         Validation::id($itemId);
-
 
         $i = $this->storage->getEmailItem($this->userId, $itemId);
         if ($i === null) {
