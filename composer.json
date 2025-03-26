@@ -9,7 +9,8 @@
         }
     },
     "scripts": {
-        "test": "phpunit",
+        "test": "phpunit --testsuite=default",
+        "cs-check": "php-cs-fixer check",
         "phpstan": "phpstan"
     },
     "require": {
