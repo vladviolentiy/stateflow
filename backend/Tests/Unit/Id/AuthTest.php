@@ -2,20 +2,30 @@
 
 namespace Flow\Tests\Unit\Id;
 
+use Flow\Core\Exceptions\AuthenticationException;
+use Flow\Core\Exceptions\IncorrectPasswordException;
+use Flow\Core\Validation;
+use Flow\Core\Validations\EncryptedData;
+use Flow\Core\Validations\RsaPublicKey;
 use Flow\Id\Controller\AuthController;
+use Flow\Id\Controller\BaseController;
 use Flow\Id\Enums\AuthMethods;
+use Flow\Id\Enums\AuthVia;
 use Flow\Id\Storage\UsersArrayStorage;
 use Flow\Tests\Unit\Methods\RSA;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 
-/**
- * @covers \Flow\Id\Controller\AuthController
- * @covers \Flow\Id\Controller\BaseController
- * @covers \Flow\Id\Storage\UsersArrayStorage
- * @covers \Flow\Core\Validation
- */
+#[CoversClass(AuthController::class)]
+#[CoversClass(BaseController::class)]
+#[CoversClass(UsersArrayStorage::class)]
+#[CoversClass(Validation::class)]
+#[CoversClass(EncryptedData::class)]
+#[CoversClass(RsaPublicKey::class)]
+#[CoversClass(AuthenticationException::class)]
+#[CoversClass(IncorrectPasswordException::class)]
 class AuthTest extends TestCase
 {
     private AuthController $auth;
@@ -66,11 +76,7 @@ class AuthTest extends TestCase
         }
     }
 
-    /**
-     * @return bool
-     * @throws ValidationException
-     */
-    public function createNewUser(): bool
+    private function createNewUser(): bool
     {
         $password = hash('sha384', 'testPassword');
         $hash = hash('sha384', 'TESTDATA');
@@ -93,5 +99,46 @@ class AuthTest extends TestCase
         $this->uuidList[] = $uuid;
 
         return true;
+    }
+
+    public function testCrashOnNonPasswordExcept(): void
+    {
+        $this->createNewUser();
+        $uuid = $this->uuidList[0];
+        $this->expectException(AuthenticationException::class);
+        $this->auth->auth(
+            $uuid,
+            AuthMethods::from('uuid'),
+            AuthVia::Fingerprint,
+            hash('sha384', 'testPassword'),
+        );
+    }
+
+    public function testBaseAuth(): void
+    {
+        $this->createNewUser();
+        $uuid = $this->uuidList[0];
+
+        $result = $this->auth->auth(
+            $uuid,
+            AuthMethods::from('uuid'),
+            AuthVia::Password,
+            hash('sha384', 'testPassword'),
+        );
+        $this->assertNotContains('password', $result);
+    }
+
+    public function testBadPassword(): void
+    {
+        $this->createNewUser();
+        $uuid = $this->uuidList[0];
+
+        $this->expectException(IncorrectPasswordException::class);
+        $this->auth->auth(
+            $uuid,
+            AuthMethods::from('uuid'),
+            AuthVia::Password,
+            hash('sha384', 'pass'),
+        );
     }
 }

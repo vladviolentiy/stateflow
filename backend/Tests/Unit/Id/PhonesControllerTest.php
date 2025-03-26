@@ -2,17 +2,18 @@
 
 namespace Flow\Tests\Unit\Id;
 
+use Flow\Id\Controller\AuthenticateBaseController;
+use Flow\Id\Controller\BaseController;
 use Flow\Id\Controller\Profile\PhonesController;
 use Flow\Id\Storage\UsersArrayStorage;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use VladViolentiy\VivaFramework\Random;
 
-/**
- * @covers \Flow\Id\Controller\Profile\PhonesController
- * @covers \Flow\Id\Storage\UsersArrayStorage
- * @covers \Flow\Id\Controller\BaseController
- * @covers \Flow\Id\Controller\AuthenticateBaseController
- */
+#[CoversClass(PhonesController::class)]
+#[CoversClass(UsersArrayStorage::class)]
+#[CoversClass(BaseController::class)]
+#[CoversClass(AuthenticateBaseController::class)]
 class PhonesControllerTest extends TestCase
 {
     public function testAddNewPhone(): void

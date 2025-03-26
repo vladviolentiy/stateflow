@@ -3,13 +3,16 @@
 namespace Flow\Tests\Unit;
 
 use Flow\Core\Validation;
+use Flow\Core\Validations\EncryptedData;
+use Flow\Core\Validations\RsaPublicKey;
 use Flow\Tests\Unit\Methods\RSA;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 
-/**
- * @covers \Flow\Core\Validation
- */
+#[CoversClass(Validation::class)]
+#[CoversClass(EncryptedData::class)]
+#[CoversClass(RsaPublicKey::class)]
 class ValidationTest extends TestCase
 {
     public function testRSAValidation(): void
