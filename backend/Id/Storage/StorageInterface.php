@@ -9,21 +9,21 @@ interface StorageInterface
 {
     /**
      * @param non-empty-string $hashedEmail
-     * @return array{userId:int, salt:string, iv:string, password:string}|null
+     * @return array{userId:positive-int, salt:non-empty-string, iv:non-empty-string, password:non-empty-string}|null
      * @throws DatabaseException
      */
     public function getUserByEmail(string $hashedEmail): ?array;
 
     /**
      * @param non-empty-string $hashedPhone
-     * @return array{userId:int,salt:string,iv:string, password:string}|null
+     * @return array{userId:positive-int,salt:non-empty-string, iv:non-empty-string, password:non-empty-string}|null
      * @throws DatabaseException
      */
     public function getUserByPhone(string $hashedPhone): ?array;
 
     /**
      * @param Uuid $uuid
-     * @return array{userId:int,salt:string,iv:string, password:string}|null
+     * @return array{userId:positive-int, salt:non-empty-string, iv:non-empty-string, password:non-empty-string}|null
      * @throws DatabaseException
      */
     public function getUserByUUID(Uuid $uuid): ?array;
@@ -51,7 +51,7 @@ interface StorageInterface
 
     /**
      * @param non-empty-string $hash
-     * @param int $userId
+     * @param positive-int $userId
      * @return void
      */
     public function insertSession(string $hash, int $userId): void;
@@ -65,7 +65,7 @@ interface StorageInterface
 
     /**
      * @param positive-int $userId
-     * @return list<array{id:int,email:string}>
+     * @return list<array{id:positive-int,email:string}>
      * @throws DatabaseException
      */
     public function getEmailList(int $userId): array;
@@ -111,6 +111,11 @@ interface StorageInterface
      */
     public function getPhonesList(int $userId): array;
 
+    /**
+     * @param positive-int $userId
+     * @param positive-int $itemId
+     * @return void
+     */
     public function deletePhone(int $userId, int $itemId): void;
 
     /**
@@ -126,7 +131,7 @@ interface StorageInterface
      * @param non-empty-string $phoneEncrypted
      * @param non-empty-string $phoneHash
      * @param bool $allowAuth
-     * @return int
+     * @return positive-int
      */
     public function insertNewPhone(int $userId, string $phoneEncrypted, string $phoneHash, bool $allowAuth): int;
 
@@ -182,7 +187,7 @@ interface StorageInterface
      * @return void
      */
     public function insertSessionMeta(
-        int    $sessionId,
+        int $sessionId,
         string $encryptedIp,
         string $encryptedUa,
         string $encryptedAE,
@@ -196,13 +201,13 @@ interface StorageInterface
      * @return void
      */
     public function updateLastSeenSessionMeta(
-        int    $sessionMetaInfoId,
+        int $sessionMetaInfoId,
         string $encryptedLastSeenAt,
     ): void;
 
     /**
      * @param positive-int $userId
-     * @return array{fNameEncrypted:non-empty-string,lNameEncrypted:non-empty-string,bDayEncrypted:non-empty-string}
+     * @return array{fNameEncrypted:non-empty-string,lNameEncrypted:non-empty-string,bDayEncrypted:non-empty-string}|null
      */
-    public function getBasicInfo(int $userId): array;
+    public function getBasicInfo(int $userId): ?array;
 }

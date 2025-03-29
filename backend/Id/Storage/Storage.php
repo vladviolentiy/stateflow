@@ -24,7 +24,7 @@ class Storage extends MysqliV2 implements StorageInterface
 
     public function getUserByEmail(string $hashedEmail): ?array
     {
-        /** @var array{userId:int, salt:string, iv:string, password:string}|null $info */
+        /** @var array{userId:positive-int, salt:non-empty-string, iv:non-empty-string, password:non-empty-string}|null $info */
         $info = $this->executeQuery('SELECT u.id as userId, salt, iv
 FROM usersEmails 
     JOIN users u on usersEmails.userId = u.id
@@ -38,7 +38,7 @@ WHERE emailHash=unhex(?) and allowAuth=true and deleted=false', [$hashedEmail])-
 
     public function getUserByUUID(Uuid $uuid): ?array
     {
-        /** @var array{userId:int, salt:string, iv:string, password:string}|null $info */
+        /** @var array{userId:positive-int, salt:non-empty-string, iv:non-empty-string, password:non-empty-string}|null $info */
         $info = $this->executeQuery('SELECT id as userId, salt, iv, password
 FROM users
 WHERE uuid=unhex(?)', [$uuid->toBinary()])->fetch_array(MYSQLI_ASSOC);
@@ -51,7 +51,7 @@ WHERE uuid=unhex(?)', [$uuid->toBinary()])->fetch_array(MYSQLI_ASSOC);
 
     public function getUserByPhone(string $hashedPhone): ?array
     {
-        /** @var array{userId:int, salt:string, iv:string, password:string}|null $info */
+        /** @var array{userId:positive-int, salt:non-empty-string, iv:non-empty-string, password:non-empty-string}|null $info */
         $info = $this->executeQuery('SELECT users.id as userId,salt,iv, password
 FROM users
     JOIN usersPhones uP on users.id = uP.userId
@@ -104,7 +104,7 @@ WHERE authHash=unhex(?)', [$token])->fetch_array(MYSQLI_ASSOC);
 
     public function getEmailList(int $userId): array
     {
-        /** @var list<array{id:int,email:string}> $data */
+        /** @var list<array{id:positive-int,email:string}> $data */
         $data = $this->executeQuery('SELECT id, emailEncrypted as email FROM usersEmails WHERE userId=? and deleted=false', [$userId])->fetch_all(MYSQLI_ASSOC);
 
         return $data;
@@ -158,9 +158,10 @@ WHERE authHash=unhex(?)', [$token])->fetch_array(MYSQLI_ASSOC);
 
     public function insertNewPhone(int $userId, string $phoneEncrypted, string $phoneHash, bool $allowAuth): int
     {
-        $this->executeQueryBool('INSERT INTO usersPhones(userId, phoneHash, phoneEncrypted, allowAuth) VALUES (?,unhex(?),?,?)', [$userId, $phoneHash, $phoneEncrypted, chr($allowAuth ? 1 : 0)]);
+        /** @var positive-int $id */
+        $id = $this->executeQueryBool('INSERT INTO usersPhones(userId, phoneHash, phoneEncrypted, allowAuth) VALUES (?,unhex(?),?,?)', [$userId, $phoneHash, $phoneEncrypted, chr($allowAuth ? 1 : 0)]);
 
-        return $this->insertId();
+        return $id;
     }
 
     public function checkPhoneInDatabase(string $phoneHash): bool
@@ -222,7 +223,7 @@ WHERE authHash=unhex(?) and ip=? and ua=? and acceptEncoding=? and acceptLang=?'
     }
 
     public function insertSessionMeta(
-        int    $sessionId,
+        int $sessionId,
         string $encryptedIp,
         string $encryptedUa,
         string $encryptedAE,
@@ -239,10 +240,10 @@ VALUES (?,?,?,?,?,?,?)', [$sessionId, $encryptedIp, $encryptedUa, $encryptedAL, 
         $this->executeQueryBool('UPDATE sessionsMeta SET lastSeenAt=? where id=?', [$encryptedLastSeenAt, $sessionMetaInfoId]);
     }
 
-    public function getBasicInfo(int $userId): array
+    public function getBasicInfo(int $userId): ?array
     {
-        /** @var array{fNameEncrypted:non-empty-string,lNameEncrypted:non-empty-string,bDayEncrypted:non-empty-string} $i */
-        $i = $this->executeQuery('SELECT fNameEncrypted,lNameEncrypted,bDayEncrypted FROM users WHERE id=?', [$userId])->fetch_array(MYSQLI_ASSOC);
+        /** @var array{fNameEncrypted:non-empty-string,lNameEncrypted:non-empty-string,bDayEncrypted:non-empty-string}|null $i */
+        $i = $this->executeQuery('SELECT fNameEncrypted, lNameEncrypted, bDayEncrypted FROM users WHERE id=?', [$userId])->fetch_array(MYSQLI_ASSOC);
 
         return $i;
     }
