@@ -5,7 +5,6 @@ namespace Flow\Id\Controller;
 use Flow\Core\Exceptions\AuthenticationException;
 use Flow\Core\Exceptions\DatabaseException;
 use Flow\Core\Exceptions\IncorrectPasswordException;
-use Flow\Core\Exceptions\NotfoundException;
 use Symfony\Component\Uid\Uuid;
 use VladViolentiy\VivaFramework\Validation;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
@@ -69,8 +68,7 @@ class AuthController extends BaseController
     /**
      * @param string $userInfo
      * @param AuthMethods $authTypesEnum
-     * @return array{userId:int, salt:string, iv:string, password:string}
-     * @throws NotfoundException
+     * @return array{userId:positive-int, salt:non-empty-string, iv:non-empty-string, password:non-empty-string}
      * @throws ValidationException
      * @throws DatabaseException
      */
@@ -88,7 +86,7 @@ class AuthController extends BaseController
         }
 
         if ($userInfo === null) {
-            throw new NotfoundException();
+            throw new \VladViolentiy\VivaFramework\Exceptions\NotfoundException();
         }
 
         return $userInfo;
@@ -98,7 +96,6 @@ class AuthController extends BaseController
      * @param string $userInfo
      * @param AuthMethods $authTypesEnum
      * @return array{salt:string, iv:string}
-     * @throws NotfoundException
      */
     public function getAuthDataForUser(string $userInfo, AuthMethods $authTypesEnum): array
     {
@@ -170,7 +167,6 @@ class AuthController extends BaseController
      * @return array{hash:string}
      * @throws DatabaseException
      * @throws IncorrectPasswordException
-     * @throws NotfoundException
      * @throws ValidationException
      */
     public function auth(string $userInfo, AuthMethods $authTypesEnum, AuthVia $authVia, string $authString): array
