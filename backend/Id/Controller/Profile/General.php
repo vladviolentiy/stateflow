@@ -3,6 +3,7 @@
 namespace Flow\Id\Controller\Profile;
 
 use Flow\Id\Controller\AuthenticateBaseController;
+use VladViolentiy\VivaFramework\Exceptions\NotfoundException;
 
 class General extends AuthenticateBaseController
 {
@@ -12,6 +13,10 @@ class General extends AuthenticateBaseController
     public function getBasicInfo(): array
     {
         $info = $this->storage->getBasicInfo($this->userId);
+
+        if ($info === null) {
+            throw new NotfoundException();
+        }
 
         return $info;
     }
