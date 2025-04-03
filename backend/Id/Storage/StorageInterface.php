@@ -3,6 +3,8 @@
 namespace Flow\Id\Storage;
 
 use Flow\Core\Exceptions\DatabaseException;
+use Flow\Id\Models\Password;
+use Flow\Id\Models\PrivateKey;
 use Symfony\Component\Uid\Uuid;
 
 interface StorageInterface
@@ -30,7 +32,7 @@ interface StorageInterface
 
     /**
      * @param Uuid $uuid
-     * @param non-empty-string $password
+     * @param Password $password
      * @param non-empty-string $iv
      * @param non-empty-string $salt
      * @param non-empty-string $fNameEncrypted
@@ -39,15 +41,15 @@ interface StorageInterface
      * @param non-empty-string $globalHash
      * @return positive-int
      */
-    public function insertUser(Uuid $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int;
+    public function insertUser(Uuid $uuid, Password $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int;
 
     /**
      * @param positive-int $userId
      * @param non-empty-string $publicKey
-     * @param non-empty-string $encryptedPrivateKey
+     * @param PrivateKey $encryptedPrivateKey
      * @return void
      */
-    public function insertNewEncryptInfo(int $userId, string $publicKey, string $encryptedPrivateKey): void;
+    public function insertNewEncryptInfo(int $userId, string $publicKey, PrivateKey $encryptedPrivateKey): void;
 
     /**
      * @param non-empty-string $hash
@@ -210,4 +212,24 @@ interface StorageInterface
      * @return array{fNameEncrypted:non-empty-string,lNameEncrypted:non-empty-string,bDayEncrypted:non-empty-string}|null
      */
     public function getBasicInfo(int $userId): ?array;
+
+    /**
+     * @param positive-int $userId
+     * @param Password $newPassword
+     * @return void
+     */
+    public function updatePassword(int $userId, Password $newPassword): void;
+
+    /**
+     * @param positive-int $userId
+     * @param PrivateKey $privateKey
+     * @return void
+     */
+    public function updateUserPrivateKey(int $userId, PrivateKey $privateKey): void;
+
+    public function beginTransaction(): void;
+
+    public function commit(): void;
+
+    public function rollBack(): void;
 }

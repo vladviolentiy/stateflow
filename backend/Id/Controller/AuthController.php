@@ -5,6 +5,8 @@ namespace Flow\Id\Controller;
 use Flow\Core\Exceptions\AuthenticationException;
 use Flow\Core\Exceptions\DatabaseException;
 use Flow\Core\Exceptions\IncorrectPasswordException;
+use Flow\Id\Models\Password;
+use Flow\Id\Models\PrivateKey;
 use Symfony\Component\Uid\Uuid;
 use VladViolentiy\VivaFramework\Validation;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
@@ -33,17 +35,14 @@ class AuthController extends BaseController
         Validation::nonEmpty($fNameEncrypted);
         Validation::nonEmpty($lNameEncrypted);
         Validation::nonEmpty($bDayEncrypted);
-        Validation::nonEmpty($encryptedPrivateKey);
 
         $decodedIv = base64_decode($iv);
         $decodedSalt = base64_decode($salt);
-        Validation::hash($password);
         Validation::hash($hash);
 
         \Flow\Core\Validation::encryptedData($fNameEncrypted);
         \Flow\Core\Validation::encryptedData($lNameEncrypted);
         \Flow\Core\Validation::encryptedData($bDayEncrypted);
-        \Flow\Core\Validation::encryptedData($encryptedPrivateKey);
 
         if (
             $decodedSalt === $decodedIv or
@@ -55,11 +54,10 @@ class AuthController extends BaseController
         \Flow\Core\Validation::RSAPublicKey($publicKey);
 
         $uuid = UUID::v4();
-        /** @var non-empty-string $passwordHash */
-        $passwordHash = password_hash($password, PASSWORD_BCRYPT, [
-            'cost' => 12,
-        ]);
-        $userId = $this->storage->insertUser($uuid, $passwordHash, $iv, $salt, $fNameEncrypted, $lNameEncrypted, $bDayEncrypted, $hash);
+
+        $password = new Password($password);
+        $encryptedPrivateKey = new PrivateKey($encryptedPrivateKey);
+        $userId = $this->storage->insertUser($uuid, $password, $iv, $salt, $fNameEncrypted, $lNameEncrypted, $bDayEncrypted, $hash);
         $this->storage->insertNewEncryptInfo($userId, $publicKey, $encryptedPrivateKey);
 
         return $uuid;

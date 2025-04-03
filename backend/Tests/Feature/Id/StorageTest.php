@@ -2,6 +2,7 @@
 
 namespace Flow\Tests\Feature\Id;
 
+use Flow\Id\Models\Password;
 use Flow\Id\Storage\Migrations\Migration;
 use Flow\Id\Storage\Migrations\Migration_0000;
 use Flow\Id\Storage\Migrations\Migration_0001;
@@ -49,7 +50,7 @@ class StorageTest extends TestCase
     {
         $userId = $this->storage->insertUser(
             Uuid::v4(),
-            'test',
+            new Password('test'),
             'testIV',
             'testSalt',
             'fName',

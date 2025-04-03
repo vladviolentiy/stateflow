@@ -8,6 +8,7 @@ use Flow\Id\Web\Auth;
 use Flow\Id\Web\Dashboard;
 use Flow\Id\Web\Profile\Email;
 use Flow\Id\Web\Profile\Phones;
+use Flow\Id\Web\Profile\Profile;
 use Flow\Id\Web\Profile\Sessions;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Request;
@@ -91,6 +92,11 @@ class Route
             'route' => '/api/id/phone/delete',
             'class' => Phones::class,
             'method' => 'delete',
+        ],
+        [
+            'route' => '/api/id/profile/changePassword',
+            'class' => Profile::class,
+            'method' => 'changePassword',
         ],
     ];
 

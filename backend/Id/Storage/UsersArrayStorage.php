@@ -2,6 +2,8 @@
 
 namespace Flow\Id\Storage;
 
+use Flow\Id\Models\Password;
+use Flow\Id\Models\PrivateKey;
 use Symfony\Component\Uid\Uuid;
 
 class UsersArrayStorage implements StorageInterface
@@ -16,6 +18,8 @@ class UsersArrayStorage implements StorageInterface
     private array $sessions = [];
     /** @var list<array{id: positive-int, sessionId: positive-int, ip: non-empty-string, ua: non-empty-string, acceptLang: non-empty-string, acceptEncoding: non-empty-string, firstSeenAt: string, lastSeenAt: string}> */
     private array $sessionsMeta = [];
+    /** @var list<array{id: positive-int, userId: positive-int, type: 'default', encryptedPrivateKey: non-empty-string, publicKey: non-empty-string}>  */
+    private array $encryptedInfo = [];
 
     public function getUserByEmail(string $hashedEmail): ?array
     {
@@ -71,7 +75,7 @@ class UsersArrayStorage implements StorageInterface
         return null;
     }
 
-    public function insertUser(Uuid $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
+    public function insertUser(Uuid $uuid, Password $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
     {
         $userId = count($this->users) + 1;
         /** @var non-empty-string $uuid */
@@ -79,7 +83,7 @@ class UsersArrayStorage implements StorageInterface
         $this->users[] = [
             'id' => $userId,
             'uuid' => $uuid,
-            'password' => $password,
+            'password' => $password->value,
             'iv' => $iv,
             'salt' => $salt,
             'fName' => $fNameEncrypted,
@@ -91,9 +95,16 @@ class UsersArrayStorage implements StorageInterface
         return $userId;
     }
 
-    public function insertNewEncryptInfo(int $userId, string $publicKey, string $encryptedPrivateKey): void
+    public function insertNewEncryptInfo(int $userId, string $publicKey, PrivateKey $encryptedPrivateKey): void
     {
-        // Implementation not required for testing purposes
+        $itemId = count($this->encryptedInfo) + 1;
+        $this->encryptedInfo[] = [
+            'id' => $itemId,
+            'userId' => $userId,
+            'type' => 'default',
+            'publicKey' => $publicKey,
+            'encryptedPrivateKey' => $encryptedPrivateKey->value,
+        ];
     }
 
     public function insertSession(string $hash, int $userId): void
@@ -363,4 +374,28 @@ class UsersArrayStorage implements StorageInterface
 
         return null;
     }
+
+    public function updateUserPrivateKey(int $userId, PrivateKey $privateKey): void
+    {
+        foreach ($this->encryptedInfo as $item) {
+            if ($item['userId'] === $userId) {
+                $item['privateKey'] = $privateKey;
+            }
+        }
+    }
+
+    public function updatePassword(int $userId, Password $newPassword): void
+    {
+        foreach ($this->users as $user) {
+            if ($user['id'] === $userId) {
+                $user['password'] = $newPassword->value;
+            }
+        }
+    }
+
+    public function beginTransaction(): void {}
+
+    public function commit(): void {}
+
+    public function rollBack(): void {}
 }

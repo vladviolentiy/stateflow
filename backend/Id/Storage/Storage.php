@@ -4,6 +4,8 @@ namespace Flow\Id\Storage;
 
 use Flow\Core\Database;
 use Flow\Core\Enums\ServicesEnum;
+use Flow\Id\Models\Password;
+use Flow\Id\Models\PrivateKey;
 use Flow\Id\Storage\Migrations\Migration;
 use Symfony\Component\Uid\Uuid;
 use VladViolentiy\VivaFramework\Databases\MigrationV2\MysqlMigrationManager;
@@ -63,11 +65,11 @@ WHERE phoneHash=unhex(?)', [$hashedPhone])->fetch_array(MYSQLI_ASSOC);
         return $info;
     }
 
-    public function insertUser(Uuid $uuid, string $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
+    public function insertUser(Uuid $uuid, Password $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
     {
         $this->executeQueryBool(
             'INSERT INTO users(uuid, password, iv, salt, fNameEncrypted, lNameEncrypted, bDayEncrypted, globalHash) VALUES(?,?,?,?,?,?,?,unhex(?))',
-            [$uuid->toBinary(), $password, $iv, $salt, $fNameEncrypted, $lNameEncrypted, $bDayEncrypted, $globalHash],
+            [$uuid->toBinary(), $password->value, $iv, $salt, $fNameEncrypted, $lNameEncrypted, $bDayEncrypted, $globalHash],
         );
         /** @var positive-int $insId */
         $insId = $this->insertId();
@@ -75,11 +77,11 @@ WHERE phoneHash=unhex(?)', [$hashedPhone])->fetch_array(MYSQLI_ASSOC);
         return $insId;
     }
 
-    public function insertNewEncryptInfo(int $userId, string $publicKey, string $encryptedPrivateKey): void
+    public function insertNewEncryptInfo(int $userId, string $publicKey, PrivateKey $encryptedPrivateKey): void
     {
         $this->executeQueryBool(
             'INSERT INTO usersEncryptInfo(userId, publicKey, encryptedPrivateKey) VALUES(?,?,?)',
-            [$userId, $publicKey, $encryptedPrivateKey],
+            [$userId, $publicKey, $encryptedPrivateKey->value],
         );
     }
 
@@ -246,5 +248,15 @@ VALUES (?,?,?,?,?,?,?)', [$sessionId, $encryptedIp, $encryptedUa, $encryptedAL, 
         $i = $this->executeQuery('SELECT fNameEncrypted, lNameEncrypted, bDayEncrypted FROM users WHERE id=?', [$userId])->fetch_array(MYSQLI_ASSOC);
 
         return $i;
+    }
+
+    public function updatePassword(int $userId, Password $newPassword): void
+    {
+        $this->executeQueryBool('UPDATE `users` SET `password`=? WHERE id=?', [$newPassword->value, $userId]);
+    }
+
+    public function updateUserPrivateKey(int $userId, PrivateKey $privateKey): void
+    {
+        $this->executeQueryBool("UPDATE `usersEncryptInfo` SET encryptedPrivateKey=? WHERE id=? and type='default'", [$privateKey->value, $userId]);
     }
 }
