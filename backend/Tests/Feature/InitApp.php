@@ -35,6 +35,7 @@ class InitApp
             ],
             json_encode($query, JSON_THROW_ON_ERROR),
         );
+
         return Route::handle($request);
     }
 

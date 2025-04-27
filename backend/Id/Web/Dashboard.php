@@ -8,7 +8,6 @@ use Flow\Id\Storage\SessionStorage;
 use VladViolentiy\VivaFramework\SuccessResponse;
 use Flow\Core\WebPrivate;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 class Dashboard extends WebPrivate
 {

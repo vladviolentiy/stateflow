@@ -103,6 +103,7 @@ class SessionArrayStorage implements SessionStorageInterface
                 ];
             }
         }
+
         return null;
     }
 }

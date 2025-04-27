@@ -4,7 +4,6 @@ namespace Flow\Id\Web;
 
 use Flow\Core\Web;
 use Flow\Id\DTO\RegisterClientDTO;
-use Flow\Id\Resources\RegisterResource;
 use Flow\Id\Services\AuthService;
 use Flow\Id\Storage\SessionStorage;
 use Flow\Id\Storage\UserStorage;

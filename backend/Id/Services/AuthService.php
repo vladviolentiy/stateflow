@@ -48,7 +48,7 @@ class AuthService extends BaseController
         $this->storage->insertNewEncryptInfo($userId, $request->publicKey, $request->encryptedPrivateKey);
 
         return RegisterResource::fromState([
-            'uuid' => $uuid
+            'uuid' => $uuid,
         ]);
     }
 
