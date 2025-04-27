@@ -2,20 +2,20 @@
 
 namespace Flow\Id\Web\Profile;
 
-use Flow\Core\WebPrivate;
-use Flow\Id\Controller\Profile\ProfileController;
-use Flow\Id\Storage\Storage;
+use Flow\Core\PrivateController;
+use Flow\Id\Services\Profile\ProfileService;
+use Flow\Id\Storage\UserStorage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class Profile extends WebPrivate
+class Profile extends PrivateController
 {
-    private readonly ProfileController $controller;
+    private readonly ProfileService $controller;
 
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->controller = new ProfileController(new Storage(), $this->info['userId']);
+        $this->controller = new ProfileService(new UserStorage(), $this->info['userId']);
     }
 
     public function changePassword(): JsonResponse

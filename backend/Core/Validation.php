@@ -3,39 +3,32 @@
 namespace Flow\Core;
 
 use Flow\Core\Enums\ValidatorEnum;
-use Flow\Core\Validations\EncryptedData;
-use Flow\Core\Validations\RsaPublicKey;
+use Flow\Core\Validations\EncryptedDataValidator;
+use Flow\Core\Validations\RsaPublicKeyValidator;
 use Flow\Core\Validations\ValidationInterface;
-use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 
 class Validation
 {
     /** @var array<string, ValidationInterface>  */
     private static array $objects = [];
 
-    /**
-     * @param string $keyInput
-     * @return bool
-     * @phpstan-assert non-empty-string $keyInput
-     * @throws ValidationException
-     */
-    public static function RSAPublicKey(string $keyInput): bool
+    public static function RSAPublicKey(): ValidationInterface
     {
         $value = ValidatorEnum::RSAKey->value;
         if (!isset(self::$objects[$value])) {
-            self::$objects[$value] = new RsaPublicKey();
+            self::$objects[$value] = new RsaPublicKeyValidator();
         }
 
-        return self::$objects[$value]->validate($keyInput);
+        return self::$objects[$value];
     }
 
-    public static function encryptedData(string $data): bool
+    public static function encryptedData(string $data, string $field = ''): bool
     {
         $value = ValidatorEnum::EncryptedData->value;
         if (!isset(self::$objects[$value])) {
-            self::$objects[$value] = new EncryptedData();
+            self::$objects[$value] = new EncryptedDataValidator();
         }
 
-        return self::$objects[$value]->validate($data);
+        return self::$objects[$value]->validate($data, $field);
     }
 }

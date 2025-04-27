@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { appStore } from '@/stores/AppStore.ts'
+import { appStore } from '@/stores/AppStore'
 
 const store = appStore()
 </script>

@@ -4,7 +4,7 @@ const LocalizationBy: LocalizationInterface = {
   register: 'Рэгістрацыя',
   authentication: 'Аўтарызацыя',
   logout: 'Выйсці з сістэмы',
-  enterAuthString: 'Email, тэлефон або uuid',
+  enterAuthString: 'EmailController, тэлефон або uuid',
   enterPassword: 'Увядзіце пароль',
   enter: 'Увайсці',
   delete: 'Выдаліць',
@@ -16,9 +16,9 @@ const LocalizationBy: LocalizationInterface = {
     fNameNull: 'Імя не ўведзена',
     lNameNull: 'Прозвішча не ўведзена',
     dobNull: 'Дата нараджэння не ўведзена',
-    emailNull: 'Email не ўведзены',
+    emailNull: 'EmailController не ўведзены',
     phoneNull: 'Тэлефон не ўведзены',
-    emailIncorrect: 'Email уведзены няправільна',
+    emailIncorrect: 'EmailController уведзены няправільна',
     phoneIncorrect: 'Тэлефон уведзены няправільна',
     dobIncorrect: 'Дата нараджэння ўведзена няправільна',
     passwordNull: 'Пароль не ўведзены',
@@ -40,7 +40,7 @@ const LocalizationBy: LocalizationInterface = {
   },
   email: {
     add: 'Дадаць email',
-    notAdded: 'Email адрасы не дададзены'
+    notAdded: 'EmailController адрасы не дададзены'
   },
   errorCodes: {
     0: 'Памылка сеткі',

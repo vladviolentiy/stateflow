@@ -5,6 +5,7 @@ namespace Flow\Id\Controller;
 use Flow\Core\Exceptions\AuthenticationException;
 use Flow\Core\Exceptions\DatabaseException;
 use Flow\Core\Exceptions\IncorrectPasswordException;
+use Flow\Id\Models\EncryptedData;
 use Flow\Id\Models\Password;
 use Flow\Id\Models\PrivateKey;
 use Symfony\Component\Uid\Uuid;
@@ -32,17 +33,15 @@ class AuthController extends BaseController
     ): Uuid {
         Validation::nonEmpty($iv);
         Validation::nonEmpty($salt);
-        Validation::nonEmpty($fNameEncrypted);
-        Validation::nonEmpty($lNameEncrypted);
-        Validation::nonEmpty($bDayEncrypted);
+
+        $fNameEncrypted = new EncryptedData($fNameEncrypted);
+        $lNameEncrypted = new EncryptedData($lNameEncrypted);
+        $bDayEncrypted = new EncryptedData($bDayEncrypted);
+
 
         $decodedIv = base64_decode($iv);
         $decodedSalt = base64_decode($salt);
         Validation::hash($hash);
-
-        \Flow\Core\Validation::encryptedData($fNameEncrypted);
-        \Flow\Core\Validation::encryptedData($lNameEncrypted);
-        \Flow\Core\Validation::encryptedData($bDayEncrypted);
 
         if (
             $decodedSalt === $decodedIv or

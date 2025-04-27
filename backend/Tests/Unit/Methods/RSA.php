@@ -2,6 +2,7 @@
 
 namespace Flow\Tests\Unit\Methods;
 
+use OpenSSLAsymmetricKey;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 
 class RSA
@@ -13,6 +14,24 @@ class RSA
      */
     public static function createPublicKey(int $bits): string
     {
+        $keyPair = self::createKeyPair($bits);
+        /** @var array{key:string}|false $keyDetail */
+        $keyDetail = openssl_pkey_get_details($keyPair);
+
+        if ($keyDetail === false) {
+            throw new ValidationException();
+        }
+
+        return $keyDetail['key'];
+    }
+
+    /**
+     * @param positive-int $bits
+     * @return OpenSSLAsymmetricKey
+     * @throws ValidationException
+     */
+    public static function createKeyPair(int $bits): OpenSSLAsymmetricKey
+    {
         $keyPair = openssl_pkey_new([
             'digest_alg' => 'sha512',
             'private_key_bits' => $bits,
@@ -21,12 +40,7 @@ class RSA
         if ($keyPair === false) {
             throw new ValidationException();
         }
-        /** @var array{key:string}|false $keyDetail */
-        $keyDetail = openssl_pkey_get_details($keyPair);
-        if ($keyDetail === false) {
-            throw new ValidationException();
-        }
 
-        return $keyDetail['key'];
+        return $keyPair;
     }
 }

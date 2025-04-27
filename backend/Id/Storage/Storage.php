@@ -4,6 +4,7 @@ namespace Flow\Id\Storage;
 
 use Flow\Core\Database;
 use Flow\Core\Enums\ServicesEnum;
+use Flow\Id\Models\EncryptedData;
 use Flow\Id\Models\Password;
 use Flow\Id\Models\PrivateKey;
 use Flow\Id\Storage\Migrations\Migration;
@@ -22,6 +23,11 @@ class Storage extends MysqliV2 implements StorageInterface
         $this->setDb($connection);
         (new MysqlMigrationManager($connection))->migrate(Migration::$list);
 
+    }
+
+    public function sleep(): void
+    {
+        $this->executeQueryRaw('SELECT sleep(10)');
     }
 
     public function getUserByEmail(string $hashedEmail): ?array
@@ -65,11 +71,11 @@ WHERE phoneHash=unhex(?)', [$hashedPhone])->fetch_array(MYSQLI_ASSOC);
         return $info;
     }
 
-    public function insertUser(Uuid $uuid, Password $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
+    public function insertUser(Uuid $uuid, Password $password, string $iv, string $salt, EncryptedData $fNameEncrypted, EncryptedData $lNameEncrypted, EncryptedData $bDayEncrypted, string $globalHash): int
     {
         $this->executeQueryBool(
             'INSERT INTO users(uuid, password, iv, salt, fNameEncrypted, lNameEncrypted, bDayEncrypted, globalHash) VALUES(?,?,?,?,?,?,?,unhex(?))',
-            [$uuid->toBinary(), $password->value, $iv, $salt, $fNameEncrypted, $lNameEncrypted, $bDayEncrypted, $globalHash],
+            [$uuid->toBinary(), $password->value, $iv, $salt, $fNameEncrypted->value, $lNameEncrypted->value, $bDayEncrypted->value, $globalHash],
         );
         /** @var positive-int $insId */
         $insId = $this->insertId();

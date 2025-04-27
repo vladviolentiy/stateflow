@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\Tests\Feature;
+namespace Flow\Tests\Iteration;
 
 abstract class DbFunctions
 {

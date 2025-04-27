@@ -2,20 +2,21 @@
 
 namespace Flow\Id\Web\Profile;
 
-use Flow\Core\WebPrivate;
-use Flow\Id\Controller\Profile\EmailController;
+use Flow\Core\PrivateController;
+use Flow\Id\Services\Profile\EmailService;
+use Flow\Id\Storage\EmailStorage;
 use VladViolentiy\VivaFramework\SuccessResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class Email extends WebPrivate
+class Email extends PrivateController
 {
-    private readonly EmailController $controller;
+    private readonly EmailService $controller;
 
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->controller = new EmailController($this->storage, $this->info['userId']);
+        $this->controller = new EmailService(new EmailStorage(), $this->info['userId']);
     }
 
     public function addNewEmail(): JsonResponse

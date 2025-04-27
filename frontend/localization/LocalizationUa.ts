@@ -6,7 +6,7 @@ const LocalizationUa: LocalizationInterface = {
   logout: 'Вийти з системи',
   enter: 'Увійти',
   delete: 'Видалити',
-  enterAuthString: 'Email, телефон або uuid',
+  enterAuthString: 'EmailController, телефон або uuid',
   enterPassword: 'Введите пароль',
   add: 'Додати',
   close: 'Закрити',
@@ -16,9 +16,9 @@ const LocalizationUa: LocalizationInterface = {
     fNameNull: "Ім'я не введено",
     lNameNull: 'Прізвище не введено',
     dobNull: 'Дата народження не введена',
-    emailNull: 'Email не введено',
+    emailNull: 'EmailController не введено',
     phoneNull: 'Телефон не введений',
-    emailIncorrect: 'Email введено некоректно',
+    emailIncorrect: 'EmailController введено некоректно',
     phoneIncorrect: ' Телефон введено некоректно',
     dobIncorrect: 'Дата народження введена некоректно',
     passwordNotRepeat: 'Паролі не співпадають',
@@ -40,7 +40,7 @@ const LocalizationUa: LocalizationInterface = {
   },
   email: {
     add: 'Додати email',
-    notAdded: 'Email адреси не додані'
+    notAdded: 'EmailController адреси не додані'
   },
   errorCodes: {
     0: 'Помилка мережі',

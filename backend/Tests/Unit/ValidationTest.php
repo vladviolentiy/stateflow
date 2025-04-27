@@ -3,29 +3,30 @@
 namespace Flow\Tests\Unit;
 
 use Flow\Core\Validation;
-use Flow\Core\Validations\EncryptedData;
-use Flow\Core\Validations\RsaPublicKey;
+use Flow\Core\Validations\EncryptedDataValidator;
+use Flow\Core\Validations\RsaPublicKeyValidator;
 use Flow\Tests\Unit\Methods\RSA;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 
 #[CoversClass(Validation::class)]
-#[CoversClass(EncryptedData::class)]
-#[CoversClass(RsaPublicKey::class)]
+#[CoversClass(EncryptedDataValidator::class)]
+#[CoversClass(RsaPublicKeyValidator::class)]
 class ValidationTest extends TestCase
 {
     public function testRSAValidation(): void
     {
+        $this->expectNotToPerformAssertions();
         $public = RSA::createPublicKey(2048);
-        $this->assertTrue(Validation::RSAPublicKey($public));
+        Validation::RSAPublicKey()->validate($public);
     }
 
     public function testRSAValidationBadStartString(): void
     {
         $this->expectException(ValidationException::class);
         $public = RSA::createPublicKey(2048);
-        $this->assertTrue(Validation::RSAPublicKey('test' . $public));
+        Validation::RSAPublicKey()->validate('test' . $public);
     }
 
     public function testValidatorEncryptedData(): void

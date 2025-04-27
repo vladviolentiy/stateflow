@@ -7,10 +7,11 @@ use VladViolentiy\VivaFramework\Req;
 
 abstract class Web
 {
-    protected readonly Req $request;
+    protected readonly Req $req;
 
-    public function __construct(Request $request)
-    {
-        $this->request = new Req($request);
+    public function __construct(
+        protected readonly Request $request,
+    ) {
+        $this->req = new Req($request);
     }
 }

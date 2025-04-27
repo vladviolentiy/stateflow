@@ -2,21 +2,22 @@
 
 namespace Flow\Id\Web\Profile;
 
-use Flow\Core\WebPrivate;
-use Flow\Id\Controller\Profile\PhonesController;
+use Flow\Core\PrivateController;
+use Flow\Id\Services\Profile\PhonesService;
+use Flow\Id\Storage\PhoneStorage;
 use VladViolentiy\VivaFramework\SuccessResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Phones extends WebPrivate
+class Phones extends PrivateController
 {
-    private readonly PhonesController $controller;
+    private readonly PhonesService $controller;
 
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->controller = new PhonesController($this->storage, $this->info['userId']);
+        $this->controller = new PhonesService(new PhoneStorage(), $this->info['userId']);
     }
 
     public function get(): Response

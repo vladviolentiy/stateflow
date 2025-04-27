@@ -10,27 +10,27 @@ final class EncryptedData implements ValidationInterface
     private const float ASCII_THRESHOLD = 0.38;
     private const float ENTROPY_THRESHOLD = 0.9;
 
-    public function validate(string $input): true
+    public function validate(string $input, string $field): true
     {
-        Validation::nonEmpty($input, 'Input data is empty');
+        Validation::nonEmpty($input, sprintf('Input data is empty in %s.', $field));
         $decodedData = base64_decode($input, true);
         if (empty($decodedData)) {
-            throw new ValidationException('Invalid base64 data');
+            throw new ValidationException(sprintf('Invalid base64 data in %s', $field));
         }
         $strlen = strlen($decodedData);
         if ($strlen % 16 !== 0) {
-            throw new ValidationException('Invalid encrypted data');
+            throw new ValidationException(sprintf('Invalid encrypted data in %s', $field));
         }
         $freq = count_chars($decodedData, 1);
         $entropy = $this->calculateEntropy($freq, $strlen);
 
         $log = log(count($freq), 2);
         if ($log == 0 || $entropy === 0.0 || $entropy < $log * self::ENTROPY_THRESHOLD) {
-            throw new ValidationException('Bad encrypted data');
+            throw new ValidationException(sprintf('Bad encrypted data in %s', $field));
         }
         $asciiStat = $this->check_ascii($decodedData, $strlen);
         if ($asciiStat > self::ASCII_THRESHOLD) {
-            throw new ValidationException('Bad encrypted data (ascii');
+            throw new ValidationException(sprintf('Bad encrypted data (ascii) in %s', $field));
         }
 
         return true;

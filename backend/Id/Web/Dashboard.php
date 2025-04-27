@@ -2,7 +2,9 @@
 
 namespace Flow\Id\Web;
 
-use Flow\Id\Controller\Profile\General;
+use Flow\Id\Services\Profile\General;
+use Flow\Id\Services\Profile\SessionsService;
+use Flow\Id\Storage\SessionStorage;
 use VladViolentiy\VivaFramework\SuccessResponse;
 use Flow\Core\WebPrivate;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -10,12 +12,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Dashboard extends WebPrivate
 {
-    public function checkAuth(): Response
+    /**
+     * @api
+     */
+    public function checkAuth(): JsonResponse
     {
         return new JsonResponse(SuccessResponse::data($this->info));
     }
 
-    public function getBasicInfo(): Response
+    /**
+     * @api
+     */
+    public function getBasicInfo(): JsonResponse
     {
         $generalController = new General($this->storage, $this->info['userId']);
         $data = $generalController->getBasicInfo();
@@ -24,15 +32,18 @@ class Dashboard extends WebPrivate
 
     }
 
-    public function writeMetaInfo(): Response
+    /**
+     * @api
+     */
+    public function writeMetaInfo(): JsonResponse
     {
-        $token = $this->request->getServer('HTTP_AUTHORIZATION') ?? '';
-        $ip = $this->request->get('ip');
-        $ua = $this->request->get('ua');
-        $al = $this->request->get('al');
-        $ae = $this->request->get('ae');
-        $lastSeen = $this->request->get('lastSeen');
-        $AuthController = new \Flow\Id\Controller\AuthController($this->storage);
+        $token = $this->req->getServer('HTTP_AUTHORIZATION') ?? '';
+        $ip = $this->req->get('ip');
+        $ua = $this->req->get('ua');
+        $al = $this->req->get('al');
+        $ae = $this->req->get('ae');
+        $lastSeen = $this->req->get('lastSeen');
+        $AuthController = new SessionsService(new SessionStorage(), $this->info['userId']);
         $AuthController->writeHashInfo(
             $token,
             $ip,
@@ -42,6 +53,6 @@ class Dashboard extends WebPrivate
             $lastSeen,
         );
 
-        return new JsonResponse(SuccessResponse::null());
+        return new JsonResponse([], 204);
     }
 }

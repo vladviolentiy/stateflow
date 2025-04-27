@@ -16,6 +16,9 @@
         <testsuite name="default">
             <directory>backend/Tests/Unit</directory>
         </testsuite>
+        <testsuite name="iteration">
+            <directory>backend/Tests/Iteration</directory>
+        </testsuite>
         <testsuite name="feature">
             <directory>backend/Tests/Feature</directory>
         </testsuite>

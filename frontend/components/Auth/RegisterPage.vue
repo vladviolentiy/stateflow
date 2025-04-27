@@ -111,8 +111,8 @@ async function registerNewUser() {
   }
   buttonDisabled.value = true
   registerStage.value = 'awaitRegister'
-  const iv = await Security.getRandom(16)
-  const salt = await Security.getRandom(16)
+  const iv = Security.getRandom(16)
+  const salt = Security.getRandom(16)
 
   const pbkdf2Key = await Encryption.deriveKey(password.value, salt)
   const passwordHash = await Hashing.digest(Security.ab2str(salt) + '' + password.value)

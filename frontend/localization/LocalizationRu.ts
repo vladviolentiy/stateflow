@@ -4,7 +4,7 @@ const LocalizationRu: LocalizationInterface = {
   register: 'Регистрация',
   authentication: 'Авторизация',
   logout: 'Выйти из системы',
-  enterAuthString: 'Email, телефон или uuid',
+  enterAuthString: 'EmailController, телефон или uuid',
   enterPassword: 'Введите пароль',
   enter: 'Войти',
   delete: 'Удалить',
@@ -16,9 +16,9 @@ const LocalizationRu: LocalizationInterface = {
     fNameNull: 'Имя не введено',
     lNameNull: 'Фамилия не введена',
     dobNull: 'Дата рождения не введена',
-    emailNull: 'Email не введен',
+    emailNull: 'EmailController не введен',
     phoneNull: 'Телефон не введен',
-    emailIncorrect: 'Email введен некорректно',
+    emailIncorrect: 'EmailController введен некорректно',
     phoneIncorrect: 'Телефон введен некорректно',
     dobIncorrect: 'Дата рождения введена некорректно',
     passwordNull: 'Пароль не введён',
@@ -40,7 +40,7 @@ const LocalizationRu: LocalizationInterface = {
   },
   email: {
     add: 'Добавить email',
-    notAdded: 'Email адреса не добавлены'
+    notAdded: 'EmailController адреса не добавлены'
   },
   errorCodes: {
     0: 'Ошибка сети',

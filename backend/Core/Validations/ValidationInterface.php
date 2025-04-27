@@ -4,5 +4,5 @@ namespace Flow\Core\Validations;
 
 interface ValidationInterface
 {
-    public function validate(string $input): true;
+    public function validate(string $input, string $field = ''): true;
 }

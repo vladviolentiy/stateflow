@@ -2,6 +2,7 @@
 
 namespace Flow\Id\Storage;
 
+use Flow\Id\Models\EncryptedData;
 use Flow\Id\Models\Password;
 use Flow\Id\Models\PrivateKey;
 use Symfony\Component\Uid\Uuid;
@@ -75,7 +76,7 @@ class UsersArrayStorage implements StorageInterface
         return null;
     }
 
-    public function insertUser(Uuid $uuid, Password $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int
+    public function insertUser(Uuid $uuid, Password $password, string $iv, string $salt, EncryptedData $fNameEncrypted, EncryptedData $lNameEncrypted, EncryptedData $bDayEncrypted, string $globalHash): int
     {
         $userId = count($this->users) + 1;
         /** @var non-empty-string $uuid */
@@ -86,9 +87,9 @@ class UsersArrayStorage implements StorageInterface
             'password' => $password->value,
             'iv' => $iv,
             'salt' => $salt,
-            'fName' => $fNameEncrypted,
-            'lName' => $lNameEncrypted,
-            'bDay' => $bDayEncrypted,
+            'fName' => $fNameEncrypted->value,
+            'lName' => $lNameEncrypted->value,
+            'bDay' => $bDayEncrypted->value,
             'hash' => $globalHash,
         ];
 

@@ -3,6 +3,7 @@
 namespace Flow\Id\Storage;
 
 use Flow\Core\Exceptions\DatabaseException;
+use Flow\Id\Models\EncryptedData;
 use Flow\Id\Models\Password;
 use Flow\Id\Models\PrivateKey;
 use Symfony\Component\Uid\Uuid;
@@ -35,13 +36,13 @@ interface StorageInterface
      * @param Password $password
      * @param non-empty-string $iv
      * @param non-empty-string $salt
-     * @param non-empty-string $fNameEncrypted
-     * @param non-empty-string $lNameEncrypted
-     * @param non-empty-string $bDayEncrypted
+     * @param EncryptedData $fNameEncrypted
+     * @param EncryptedData $lNameEncrypted
+     * @param EncryptedData $bDayEncrypted
      * @param non-empty-string $globalHash
      * @return positive-int
      */
-    public function insertUser(Uuid $uuid, Password $password, string $iv, string $salt, string $fNameEncrypted, string $lNameEncrypted, string $bDayEncrypted, string $globalHash): int;
+    public function insertUser(Uuid $uuid, Password $password, string $iv, string $salt, EncryptedData $fNameEncrypted, EncryptedData $lNameEncrypted, EncryptedData $bDayEncrypted, string $globalHash): int;
 
     /**
      * @param positive-int $userId
