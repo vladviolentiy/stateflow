@@ -27,7 +27,7 @@ class PhoneConfigController extends WebPrivate
     /**
      * @api
      */
-    public function get(): Response
+    public function get(): JsonResponse
     {
         $info = $this->controller->get();
 
@@ -37,7 +37,7 @@ class PhoneConfigController extends WebPrivate
     /**
      * @api
      */
-    public function addNewPhone(): Response
+    public function addNewPhone(): JsonResponse
     {
         $emailEncrypted = $this->req->get('phoneEncrypted');
         $emailHash = $this->req->get('phoneHash');
