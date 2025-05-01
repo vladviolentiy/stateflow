@@ -24,8 +24,6 @@ class UserArrayStorage implements UserStorageInterface
 
     public function getUserByEmail(string $hashedEmail): ?array
     {
-        $info = $this->emailStorage->checkEmailInDatabase($hashedEmail);
-
         foreach ($this->emailStorage->usersEmail as $item) {
             if ($item['emailHash'] === $hashedEmail) {
                 $user = $this->getUserById($item['userId']);

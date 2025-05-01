@@ -14,6 +14,10 @@ class PhoneConfigController extends WebPrivate
 {
     private readonly PhonesService $controller;
 
+    /**
+     * @api
+     * @param Request $request
+     */
     public function __construct(Request $request)
     {
         parent::__construct($request);

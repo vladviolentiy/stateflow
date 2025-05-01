@@ -2,11 +2,11 @@
 
 namespace Flow\Tests\Feature\Id;
 
-use Flow\Id\DTO\RegisterClientDTO;
 use Flow\Tests\Feature\EncryptedDataSeeder;
 use Flow\Tests\Feature\InitApp;
 use Flow\Tests\Unit\Methods\RSA;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\Uuid;
 use VladViolentiy\VivaFramework\Random;
 
 class RegisterTest extends TestCase
@@ -27,9 +27,10 @@ class RegisterTest extends TestCase
             throw new \Exception('Failed to get private key');
         }
         $publicKey = $privateKeyDer['key'];
-
         openssl_pkey_export($rsaKey, $privateKey);
-        $cleaner = str_replace(["\n", '-----BEGIN PRIVATE KEY-----', '-----END PRIVATE KEY-----'], '', $privateKey);
+        /** @var string $privateKeyString */
+        $privateKeyString = $privateKey;
+        $cleaner = str_replace(["\n", '-----BEGIN PRIVATE KEY-----', '-----END PRIVATE KEY-----'], '', $privateKeyString);
         $decoded = base64_decode($cleaner);
 
         $iv = EncryptedDataSeeder::randomData();
@@ -54,7 +55,14 @@ class RegisterTest extends TestCase
         ]);
 
         $this->assertEquals(200, $result->getStatusCode());
-        $response = RegisterClientDTO::createFrom($result->getContent());
-        $this->assertTrue(json_decode($result, flags: JSON_THROW_ON_ERROR)->success);
+        $content = $result->getContent();
+        $this->assertNotFalse($content);
+        /** @var object{success:false, text: string}|object{success:true, data: object{uuid: non-empty-string}}|null $decode */
+        $decode = json_decode($content, flags: JSON_THROW_ON_ERROR);
+        $this->assertNotNull($decode);
+        $this->assertTrue($decode->success);
+        if (isset($decode->data)) {
+            $this->assertInstanceOf(Uuid::class, Uuid::fromString($decode->data->uuid));
+        }
     }
 }

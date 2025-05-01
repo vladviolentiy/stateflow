@@ -18,7 +18,7 @@ class InitApp
      * @param 'GET'|'POST'|'PUT' $method
      * @param non-empty-string $endpoint
      * @param array<mixed> $query
-     * @return string
+     * @return Response
      * @throws \JsonException
      */
     final public function sendQuery(string $method, string $endpoint, array $query): Response

@@ -110,7 +110,7 @@ class AuthTest extends TestCase
 
         $uuid = $this->auth->createNewUser($dto);
 
-        $this->uuidList[] = $uuid;
+        $this->uuidList[] = $uuid->uuid;
 
         return true;
     }

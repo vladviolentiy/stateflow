@@ -17,7 +17,7 @@ abstract class PrivateController extends Web
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $token = $this->request->getServer('HTTP_AUTHORIZATION') ?? '';
+        $token = $this->req->getServer('HTTP_AUTHORIZATION') ?? '';
         $this->storage = new UserStorage();
         $this->sessionStorage = new SessionStorage();
         $controller = new AuthService($this->storage, $this->sessionStorage);
