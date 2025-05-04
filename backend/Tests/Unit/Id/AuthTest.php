@@ -20,7 +20,7 @@ use Flow\Id\Storage\ArrayStorage\EmailArrayStorage;
 use Flow\Id\Storage\ArrayStorage\PhoneArrayStorage;
 use Flow\Id\Storage\ArrayStorage\SessionArrayStorage;
 use Flow\Id\Storage\ArrayStorage\UserArrayStorage;
-use Flow\Tests\Unit\Methods\RSA;
+use Flow\Tests\Unit\Methods\RSAHelpers;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
@@ -94,15 +94,15 @@ class AuthTest extends TestCase
         $iv = base64_encode('1234567890abcdef');
         $salt = base64_encode(random_bytes(16));
 
-        $public = RSA::createPublicKey(2048);
+        $public = RSAHelpers::createPublicKey(2048);
 
         $dto = new RegisterClientDTO(
             new Password($password),
             $iv,
             $salt,
             $hash,
-            new RsaPublicKey(''),
-            new PrivateKey(''),
+            new RsaPublicKey($public),
+            new PrivateKey($password),
             new EncryptedData(''),
             new EncryptedData(''),
             new EncryptedData(''),

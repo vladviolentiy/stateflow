@@ -5,7 +5,7 @@ namespace Flow\Tests\Unit\Methods;
 use OpenSSLAsymmetricKey;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 
-class RSA
+class RSAHelpers
 {
     /**
      * @param positive-int $bits

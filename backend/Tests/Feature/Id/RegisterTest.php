@@ -4,7 +4,7 @@ namespace Flow\Tests\Feature\Id;
 
 use Flow\Tests\Feature\EncryptedDataSeeder;
 use Flow\Tests\Feature\InitApp;
-use Flow\Tests\Unit\Methods\RSA;
+use Flow\Tests\Unit\Methods\RSAHelpers;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 use VladViolentiy\VivaFramework\Random;
@@ -21,7 +21,7 @@ class RegisterTest extends TestCase
 
     public function testRegister(): void
     {
-        $rsaKey = RSA::createKeyPair(4096);
+        $rsaKey = RSAHelpers::createKeyPair(4096);
         $privateKeyDer = openssl_pkey_get_details($rsaKey);
         if ($privateKeyDer === false) {
             throw new \Exception('Failed to get private key');

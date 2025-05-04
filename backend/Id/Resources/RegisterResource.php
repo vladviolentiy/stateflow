@@ -3,9 +3,16 @@
 namespace Flow\Id\Resources;
 
 use Flow\Core\Interfaces\ResponseInterface;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Uid\UuidV4;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'RegisterResource',
+    properties: [
+        new OA\Property(property: 'uuid', description: 'Unique identifier for the registered user', type: 'string', format: 'uuid'),
+    ],
+    type: 'object',
+)]
 final readonly class RegisterResource implements ResponseInterface
 {
     public function __construct(

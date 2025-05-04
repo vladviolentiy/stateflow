@@ -8,7 +8,6 @@ use Flow\Id\Storage\PhoneStorage;
 use VladViolentiy\VivaFramework\SuccessResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class PhoneConfigController extends WebPrivate
 {

@@ -3,10 +3,11 @@
 namespace Flow\Id\Web;
 
 use Flow\Core\Web;
-use Flow\Id\DTO\RegisterClientDTO;
+use Flow\Id\DTO\Factories\RegisterClientDtoFactory;
 use Flow\Id\Services\AuthService;
 use Flow\Id\Storage\SessionStorage;
 use Flow\Id\Storage\UserStorage;
+use OpenApi\Attributes as OA;
 use VladViolentiy\VivaFramework\SuccessResponse;
 use Flow\Id\Enums\AuthMethods;
 use Flow\Id\Enums\AuthVia;
@@ -52,9 +53,27 @@ class AuthController extends Web
     /**
      * @api
      */
+    #[OA\Post(
+        path: '/api/id/register',
+        description: 'Creates a new user with the provided credentials',
+        summary: 'Register a new user',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/RegisterClientDTO'),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Successful registration',
+                content: new OA\JsonContent(ref: '#/components/schemas/RegisterResource'),
+            ),
+            new OA\Response(response: 400, description: 'Bad request'),
+            new OA\Response(response: 500, description: 'Internal server error'),
+        ],
+    )]
     public function register(): Response
     {
-        $creds = RegisterClientDTO::createFrom($this->request);
+        $creds = RegisterClientDtoFactory::createFromRequest($this->request);
 
         $uuid = $this->controller->createNewUser($creds);
 

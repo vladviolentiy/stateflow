@@ -2,85 +2,51 @@
 
 namespace Flow\Id\DTO;
 
+use Flow\Core\Interfaces\DtoInteface;
 use Flow\Id\Models\EncryptedData;
 use Flow\Id\Models\Password;
 use Flow\Id\Models\PrivateKey;
 use Flow\Id\Models\RsaPublicKey;
-use Symfony\Component\HttpFoundation\Request;
-use VladViolentiy\VivaFramework\Exceptions\ValidationException;
-use VladViolentiy\VivaFramework\Validation;
+use OpenApi\Attributes as OA;
 
-class RegisterClientDTO
+#[OA\Schema(
+    schema: 'RegisterClientDTO',
+    required: ['password', 'iv', 'salt', 'fNameEncrypted', 'lNameEncrypted', 'bDayEncrypted', 'hash', 'publicKey', 'encryptedPrivateKey'],
+    properties: [
+        new OA\Property(property: 'password', description: 'User password', type: 'string'),
+        new OA\Property(property: 'iv', description: 'Initialization vector for encryption', type: 'string'),
+        new OA\Property(property: 'salt', description: 'Salt for password hashing', type: 'string'),
+        new OA\Property(property: 'fNameEncrypted', description: 'Encrypted first name', type: 'string'),
+        new OA\Property(property: 'lNameEncrypted', description: 'Encrypted last name', type: 'string'),
+        new OA\Property(property: 'bDayEncrypted', description: 'Encrypted birthdate', type: 'string'),
+        new OA\Property(property: 'hash', description: 'Hash of user data', type: 'string'),
+        new OA\Property(property: 'publicKey', description: "User's public key", type: 'string'),
+        new OA\Property(property: 'encryptedPrivateKey', description: 'Encrypted private key', type: 'string'),
+    ],
+    type: 'object',
+)]
+class RegisterClientDTO implements DtoInteface
 {
-    /** @var non-empty-string  */
-    public string $iv;
-    /** @var non-empty-string  */
-    public string $salt;
-    /** @var non-empty-string  */
-    public string $hash;
-
     /**
      * @param Password $password
-     * @param string $iv
-     * @param string $salt
-     * @param string $hash
+     * @param non-empty-string $iv
+     * @param non-empty-string $salt
+     * @param non-empty-string $hash
      * @param RsaPublicKey $publicKey
      * @param PrivateKey $encryptedPrivateKey
      * @param EncryptedData $fNameEncrypted
      * @param EncryptedData $lNameEncrypted
      * @param EncryptedData $bDayEncrypted
-     * @throws ValidationException
      */
     public function __construct(
         public Password $password,
-        string $iv,
-        string $salt,
-        string $hash,
+        public string $iv,
+        public string $salt,
+        public string $hash,
         public RsaPublicKey $publicKey,
         public PrivateKey $encryptedPrivateKey,
         public EncryptedData $fNameEncrypted,
         public EncryptedData $lNameEncrypted,
         public EncryptedData $bDayEncrypted,
-    ) {
-        $this->validate($iv, $salt, $hash);
-    }
-
-    private function validate(
-        string $iv,
-        string $salt,
-        string $hash,
-    ): void {
-        Validation::nonEmpty($iv);
-        Validation::nonEmpty($salt);
-        Validation::hash($hash);
-
-        $decodedIv = base64_decode($iv);
-        $decodedSalt = base64_decode($salt);
-
-        if (
-            $decodedSalt === $decodedIv ||
-            strlen($decodedIv) !== 16 ||
-            strlen($decodedSalt) !== 16
-        ) {
-            throw new ValidationException();
-        }
-        $this->iv = $iv;
-        $this->salt = $salt;
-        $this->hash = $hash;
-    }
-
-    public static function createFrom(Request $request): self
-    {
-        return new self(
-            new Password((string) $request->getPayload()->get('password')),
-            (string) $request->getPayload()->get('iv'),
-            (string) $request->getPayload()->get('salt'),
-            (string) $request->getPayload()->get('hash'),
-            new RsaPublicKey((string) $request->getPayload()->get('publicKey')),
-            new PrivateKey((string) $request->getPayload()->get('encryptedPrivateKey')),
-            new EncryptedData((string) $request->getPayload()->get('fNameEncrypted')),
-            new EncryptedData((string) $request->getPayload()->get('lNameEncrypted')),
-            new EncryptedData((string) $request->getPayload()->get('bDayEncrypted')),
-        );
-    }
+    ) {}
 }

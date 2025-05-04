@@ -2,4 +2,4 @@
 
 include __DIR__ . '/../vendor/autoload.php';
 
-\Flow\Core\Route::load();
+\Flow\Core\Application::load();

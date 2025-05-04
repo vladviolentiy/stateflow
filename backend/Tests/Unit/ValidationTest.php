@@ -5,7 +5,7 @@ namespace Flow\Tests\Unit;
 use Flow\Core\Validation;
 use Flow\Core\Validations\EncryptedDataValidator;
 use Flow\Core\Validations\RsaPublicKeyValidator;
-use Flow\Tests\Unit\Methods\RSA;
+use Flow\Tests\Unit\Methods\RSAHelpers;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
@@ -18,14 +18,14 @@ class ValidationTest extends TestCase
     public function testRSAValidation(): void
     {
         $this->expectNotToPerformAssertions();
-        $public = RSA::createPublicKey(2048);
+        $public = RSAHelpers::createPublicKey(2048);
         Validation::RSAPublicKey()->validate($public);
     }
 
     public function testRSAValidationBadStartString(): void
     {
         $this->expectException(ValidationException::class);
-        $public = RSA::createPublicKey(2048);
+        $public = RSAHelpers::createPublicKey(2048);
         Validation::RSAPublicKey()->validate('test' . $public);
     }
 

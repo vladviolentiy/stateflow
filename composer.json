@@ -20,6 +20,7 @@
         "symfony/dotenv": "^6.4",
         "symfony/console": "^6.4",
         "vladviolentiy/viva-framework": "^0.5.0",
+        "zircote/swagger-php": "^5.1",
         "ext-pdo": "*",
         "ext-openssl": "*",
         "ext-mysqli": "*",
@@ -29,6 +30,6 @@
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^11.5",
         "friendsofphp/php-cs-fixer": "^3.72",
-        "vimeo/psalm": "^6.5"
+        "vimeo/psalm": "^6.5",
     }
 }

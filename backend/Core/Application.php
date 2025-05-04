@@ -10,12 +10,14 @@ use Flow\Id\Web\Profile\EmailController;
 use Flow\Id\Web\Profile\PhoneConfigController;
 use Flow\Id\Web\Profile\ProfileController;
 use Flow\Id\Web\Profile\SessionsController;
+use OpenApi\Attributes\Info;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Route
+#[Info(version: '1.0', title: 'Stateflow project API')]
+class Application
 {
     /** @var list<array{route:non-empty-string,method:"GET"|"POST"|"PUT"|"PATCH"|"DELETE",class:class-string,handler:non-empty-string}> */
     private static array $list = [
@@ -132,7 +134,7 @@ class Route
         /** @var non-empty-string $uri */
         $uri = $request->server->get('REQUEST_URI');
         $require = explode('?', $uri)[0];
-        $routes = Route::$list;
+        $routes = Application::$list;
 
         try {
             foreach ($routes as $route) {

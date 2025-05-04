@@ -2,7 +2,7 @@
 
 namespace Flow\Tests\Feature;
 
-use Flow\Core\Route;
+use Flow\Core\Application;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,7 +36,7 @@ class InitApp
             json_encode($query, JSON_THROW_ON_ERROR),
         );
 
-        return Route::handle($request);
+        return Application::handle($request);
     }
 
     public static function initTestEnv(): void
