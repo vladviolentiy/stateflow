@@ -3,7 +3,6 @@
 namespace Flow\Id\Services;
 
 use Flow\Core\Exceptions\AuthenticationException;
-use Flow\Core\Exceptions\DatabaseException;
 use Flow\Core\Exceptions\IncorrectPasswordException;
 use Flow\Id\DTO\RegisterClientDTO;
 use Flow\Id\Models\Password;
@@ -57,7 +56,6 @@ class AuthService extends BaseController
      * @param AuthMethods $authTypesEnum
      * @return array{userId:positive-int, salt:non-empty-string, iv:non-empty-string, password:non-empty-string}
      * @throws ValidationException
-     * @throws DatabaseException
      */
     private function getUserInfoAuth(string $userInfo, AuthMethods $authTypesEnum): array
     {
@@ -119,9 +117,6 @@ class AuthService extends BaseController
      * @param AuthMethods $authTypesEnum
      * @param string $authString
      * @return AuthResource
-     * @throws DatabaseException
-     * @throws IncorrectPasswordException
-     * @throws ValidationException
      */
     public function auth(string $userInfo, AuthMethods $authTypesEnum, AuthVia $authVia, string $authString): AuthResource
     {

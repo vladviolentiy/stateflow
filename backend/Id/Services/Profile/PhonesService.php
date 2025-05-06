@@ -2,7 +2,6 @@
 
 namespace Flow\Id\Services\Profile;
 
-use Flow\Core\Exceptions\DatabaseException;
 use Flow\Id\Services\BaseController;
 use Flow\Id\Storage\Interfaces\PhoneStorageInterface;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
@@ -23,7 +22,6 @@ class PhonesService extends BaseController
 
     /**
      * @return list<array{id:int,phone:string}>
-     * @throws DatabaseException
      */
     public function get(): array
     {
