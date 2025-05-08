@@ -2,7 +2,6 @@
 
 namespace Flow\Id\Storage\Interfaces;
 
-use Flow\Core\Exceptions\DatabaseException;
 use Flow\Id\Models\EncryptedData;
 use Flow\Id\Models\Password;
 use Flow\Id\Models\PrivateKey;
@@ -14,21 +13,18 @@ interface UserStorageInterface
     /**
      * @param non-empty-string $hashedEmail
      * @return array{userId:positive-int, salt:non-empty-string, iv:non-empty-string, password:non-empty-string}|null
-     * @throws DatabaseException
      */
     public function getUserByEmail(string $hashedEmail): ?array;
 
     /**
      * @param non-empty-string $hashedPhone
      * @return array{userId:positive-int,salt:non-empty-string, iv:non-empty-string, password:non-empty-string}|null
-     * @throws DatabaseException
      */
     public function getUserByPhone(string $hashedPhone): ?array;
 
     /**
      * @param Uuid $uuid
      * @return array{userId:positive-int, salt:non-empty-string, iv:non-empty-string, password:non-empty-string}|null
-     * @throws DatabaseException
      */
     public function getUserByUUID(Uuid $uuid): ?array;
 

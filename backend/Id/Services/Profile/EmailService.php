@@ -73,8 +73,6 @@ class EmailService extends BaseController
     /**
      * @param int $itemId
      * @return array{emailEncrypted:string,allowAuth:bool}
-     * @throws DatabaseException
-     * @throws NotfoundException
      */
     public function getEmailItem(int $itemId): array
     {
