@@ -2,7 +2,6 @@
 
 namespace Flow\Id\Services\Profile;
 
-use Flow\Core\Exceptions\DatabaseException;
 use Flow\Id\Services\BaseController;
 use Flow\Id\Storage\Interfaces\EmailStorageInterface;
 use VladViolentiy\VivaFramework\Exceptions\NotfoundException;
@@ -24,7 +23,6 @@ class EmailService extends BaseController
 
     /**
      * @return list<array{id:int,email:string}>
-     * @throws DatabaseException
      */
     public function getEmailList(): array
     {

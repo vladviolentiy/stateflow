@@ -2,8 +2,6 @@
 
 namespace Flow\Id\Storage\Interfaces;
 
-use Flow\Core\Exceptions\DatabaseException;
-
 interface PhoneStorageInterface
 {
     /**
@@ -15,7 +13,6 @@ interface PhoneStorageInterface
     /**
      * @param positive-int $userId
      * @return list<array{id:int,phone:string}>
-     * @throws DatabaseException
      */
     public function getPhonesList(int $userId): array;
 
@@ -30,7 +27,6 @@ interface PhoneStorageInterface
      * @param positive-int $userId
      * @param positive-int $itemId
      * @return array{phoneEncrypted:string,allowAuth:int}|null
-     * @throws DatabaseException
      */
     public function getPhoneItem(int $userId, int $itemId): ?array;
 
