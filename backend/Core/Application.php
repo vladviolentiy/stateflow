@@ -134,12 +134,11 @@ class Application
         /** @var non-empty-string $uri */
         $uri = $request->server->get('REQUEST_URI');
         $require = explode('?', $uri)[0];
-        $requestMethod = $request->getMethod();
         $routes = Application::$list;
 
         try {
             foreach ($routes as $route) {
-                if ($route['method'] === $requestMethod && $route['route'] === $require) {
+                if ($route['method'] === $request->getMethod() and $route['route'] === $require) {
                     $method = $route['handler'];
                     $class = new $route['class']($request);
                     /** @var Response $response */

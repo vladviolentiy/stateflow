@@ -33,6 +33,7 @@ class ValidationTest extends TestCase
     {
         $this->assertTrue(Validation::encryptedData('38HTxVC39q7bpiuRcfVonPZR1eIHDMD0XL302zd0+pBm56TJIXEbcTtdcASbIYSe'));
         $this->assertTrue(Validation::encryptedData('DyNvFhjpnPcKOXk3j4tXjg=='));
+        $this->assertTrue(Validation::encryptedData('39lT6EQIoNVFF5FInRNStw=='));
         $this->assertTrue(Validation::encryptedData('8DD7/VuH3z3yQ+PFE6a8r+3dkp4o0HeLqFcFrzT/oJY='));
     }
 

@@ -2,11 +2,14 @@
 
 namespace Flow\Id\Storage\Interfaces;
 
+use Flow\Core\Exceptions\DatabaseException;
+
 interface EmailStorageInterface
 {
     /**
      * @param positive-int $userId
      * @return list<array{id:positive-int,email:string}>
+     * @throws DatabaseException
      */
     public function getByUserId(int $userId): array;
 
@@ -33,12 +36,14 @@ interface EmailStorageInterface
      * @param positive-int $userId
      * @param positive-int $itemId
      * @return array{emailEncrypted:string,allowAuth:int}|null
+     * @throws DatabaseException
      */
     public function getItemById(int $userId, int $itemId): ?array;
 
     /**
      * @param non-empty-string $hash
      * @return array{userId:positive-int}|null
+     * @throws DatabaseException
      */
     public function getItemByHash(string $hash): ?array;
 

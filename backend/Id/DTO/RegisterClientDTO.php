@@ -25,7 +25,7 @@ use OpenApi\Attributes as OA;
     ],
     type: 'object',
 )]
-class RegisterClientDTO implements DtoInteface
+readonly class RegisterClientDTO implements DtoInteface
 {
     /**
      * @param Password $password

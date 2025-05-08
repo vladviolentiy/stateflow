@@ -2,6 +2,8 @@
 
 namespace Flow\Id\Storage\Interfaces;
 
+use Flow\Core\Exceptions\DatabaseException;
+
 interface SessionStorageInterface
 {
     /**
@@ -72,6 +74,7 @@ interface SessionStorageInterface
     /**
      * @param non-empty-string $token
      * @return array{userId:positive-int,lang:non-empty-string,sessionId:positive-int}|null
+     * @throws DatabaseException
      */
     public function checkIssetToken(string $token): ?array;
 }
