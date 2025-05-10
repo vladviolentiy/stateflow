@@ -2,7 +2,7 @@
 
 namespace Flow\Id\DTO\Factories;
 
-use Flow\Core\Interfaces\CreateFromRequestDtoInterface;
+use Flow\Core\Interfaces\CreateFromRequestInterface;
 use Flow\Id\DTO\RegisterClientDTO;
 use Flow\Id\Models\EncryptedData;
 use Flow\Id\Models\Password;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 use VladViolentiy\VivaFramework\Validation;
 
-class RegisterClientDtoFactory implements CreateFromRequestDtoInterface
+class RegisterClientFactory implements CreateFromRequestInterface
 {
     /**
      * @param string $iv

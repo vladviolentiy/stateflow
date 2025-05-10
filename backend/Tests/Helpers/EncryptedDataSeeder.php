@@ -8,7 +8,7 @@ class EncryptedDataSeeder
 {
     /**
      * @param positive-int $length
-     * @return string
+     * @return non-empty-string
      * @throws RandomException
      */
     public static function randomData(int $length = 16): string

@@ -4,12 +4,14 @@ namespace Flow\Id\Services;
 
 use Flow\Core\Exceptions\AuthenticationException;
 use Flow\Core\Exceptions\IncorrectPasswordException;
+use Flow\Id\DTO\CheckAuthDTO;
 use Flow\Id\DTO\RegisterClientDTO;
 use Flow\Id\Resources\AuthResource;
 use Flow\Id\Resources\RegisterResource;
 use Flow\Id\Storage\Interfaces\SessionStorageInterface;
 use Flow\Id\Storage\Interfaces\UserStorageInterface;
 use Symfony\Component\Uid\Uuid;
+use VladViolentiy\VivaFramework\Exceptions\NotfoundException;
 use VladViolentiy\VivaFramework\Validation;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 use VladViolentiy\VivaFramework\Random;
@@ -70,7 +72,7 @@ class AuthService extends BaseController
         }
 
         if ($userInfo === null) {
-            throw new \VladViolentiy\VivaFramework\Exceptions\NotfoundException();
+            throw new NotfoundException();
         }
 
         return $userInfo;
@@ -91,22 +93,20 @@ class AuthService extends BaseController
     }
 
     /**
-     * @param string $token
      * @return array{userId:positive-int,lang:non-empty-string}
      * @throws AuthenticationException
      */
-    public function checkAuth(string $token): array
+    public function checkAuth(CheckAuthDTO $networkDataDto): array
     {
-        Validation::hash($token);
-        $userInfo = $this->sessionStorage->checkIssetToken($token);
-        unset($userInfo['sessionId']);
+        $userInfo = $this->sessionStorage->checkIssetToken($networkDataDto->token);
         if ($userInfo === null) {
             throw new AuthenticationException();
         }
-        $userInfo['ip'] = $_SERVER['REMOTE_ADDR'];
-        $userInfo['ua'] = $_SERVER['HTTP_USER_AGENT'];
-        $userInfo['acceptEncoding'] = $_SERVER['HTTP_ACCEPT_ENCODING'];
-        $userInfo['acceptLang'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        unset($userInfo['sessionId']);
+        $userInfo['ip'] = $networkDataDto->ip;
+        $userInfo['ua'] = $networkDataDto->ua;
+        $userInfo['acceptEncoding'] = $networkDataDto->acceptEncoding;
+        $userInfo['acceptLang'] = $networkDataDto->acceptLanguage;
 
         return $userInfo;
     }

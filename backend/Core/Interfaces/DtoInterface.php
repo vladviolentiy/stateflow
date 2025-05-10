@@ -2,4 +2,4 @@
 
 namespace Flow\Core\Interfaces;
 
-interface DtoInteface {}
+interface DtoInterface {}

@@ -2,7 +2,7 @@
 
 namespace Flow\Id\DTO;
 
-use Flow\Core\Interfaces\DtoInteface;
+use Flow\Core\Interfaces\DtoInterface;
 use Flow\Id\Models\EncryptedData;
 use Flow\Id\Models\Password;
 use Flow\Id\Models\PrivateKey;
@@ -25,7 +25,7 @@ use OpenApi\Attributes as OA;
     ],
     type: 'object',
 )]
-readonly class RegisterClientDTO implements DtoInteface
+readonly class RegisterClientDTO implements DtoInterface
 {
     /**
      * @param Password $password

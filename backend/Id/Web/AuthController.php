@@ -3,7 +3,7 @@
 namespace Flow\Id\Web;
 
 use Flow\Core\Web;
-use Flow\Id\DTO\Factories\RegisterClientDtoFactory;
+use Flow\Id\DTO\Factories\RegisterClientFactory;
 use Flow\Id\Services\AuthService;
 use Flow\Id\Storage\SessionStorage;
 use Flow\Id\Storage\UserStorage;
@@ -73,7 +73,7 @@ class AuthController extends Web
     )]
     public function register(): Response
     {
-        $creds = RegisterClientDtoFactory::createFromRequest($this->request);
+        $creds = RegisterClientFactory::createFromRequest($this->request);
 
         $uuid = $this->controller->createNewUser($creds);
 

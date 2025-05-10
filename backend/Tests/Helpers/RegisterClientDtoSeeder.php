@@ -17,6 +17,10 @@ class RegisterClientDtoSeeder
 {
     public const string PASSWORD = 'TestPassword!';
 
+    /**
+     * @param string $salt
+     * @return non-empty-string
+     */
     private static function getPbkdfedPassword(string $salt): string
     {
         return hash_pbkdf2('sha256', self::PASSWORD, $salt, 100000);
@@ -33,16 +37,18 @@ class RegisterClientDtoSeeder
         if ($keyDetail === false) {
             throw new Exception('Failed to get private key');
         }
+        /** @var string $publicKey */
         $publicKey = $keyDetail['key'];
         $iv = EncryptedDataSeeder::randomData();
         $encyptedPrivateKey = self::encryptPrivateKey($rsaKey, $password, $iv);
         $fName = openssl_encrypt('Violentiy', 'AES-256-CBC', $password, iv: $iv);
         $lName = openssl_encrypt('Vladislav', 'AES-256-CBC', $password, iv: $iv);
         $bDay = openssl_encrypt((new DateTimeImmutable('2000-01-01'))->format('Y-m-d'), 'AES-256-CBC', $password, iv: $iv);
+        if ($fName === false || $lName === false || $bDay === false) {
+            throw new Exception('Failed to create private key');
+        }
         $hash = Random::hash(sprintf('test-test-2000-01-01-%s', $salt));
         $password = Random::hash($password);
-
-        dump($fName);
 
         return new RegisterClientDTO(
             new Password($password),
