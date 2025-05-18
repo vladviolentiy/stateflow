@@ -4,6 +4,8 @@ namespace Flow\Id\Resources;
 
 use Flow\Core\Interfaces\ResponseInterface;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use VladViolentiy\VivaFramework\SuccessResponse;
 
 #[OA\Schema(
     schema: 'AuthResource',
@@ -38,6 +40,11 @@ final readonly class AuthResource implements ResponseInterface
             'salt' => $this->salt,
             'iv' => $this->iv,
         ];
+    }
+
+    public function toResponse(): JsonResponse
+    {
+        return new JsonResponse(SuccessResponse::data($this->toArray()));
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Flow\Core\Interfaces;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 interface ResponseInterface
 {
     /**
@@ -14,4 +16,6 @@ interface ResponseInterface
      * @return static
      */
     public static function fromState(array $state): static;
+
+    public function toResponse(): JsonResponse;
 }

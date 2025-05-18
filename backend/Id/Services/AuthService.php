@@ -4,7 +4,6 @@ namespace Flow\Id\Services;
 
 use Flow\Core\Exceptions\AuthenticationException;
 use Flow\Core\Exceptions\IncorrectPasswordException;
-use Flow\Id\DTO\CheckAuthDTO;
 use Flow\Id\DTO\RegisterClientDTO;
 use Flow\Id\Resources\AuthResource;
 use Flow\Id\Resources\RegisterResource;
@@ -18,7 +17,7 @@ use VladViolentiy\VivaFramework\Random;
 use Flow\Id\Enums\AuthMethods;
 use Flow\Id\Enums\AuthVia;
 
-class AuthService extends BaseController
+class AuthService extends BaseService
 {
     /**
      * @param UserStorageInterface $storage
@@ -93,20 +92,16 @@ class AuthService extends BaseController
     }
 
     /**
-     * @return array{userId:positive-int,lang:non-empty-string}
+     * @return array{userId:positive-int, lang:non-empty-string, sessionId:positive-int}
      * @throws AuthenticationException
      */
-    public function checkAuth(CheckAuthDTO $networkDataDto): array
+    public function checkAuth(string $token): array
     {
-        $userInfo = $this->sessionStorage->checkIssetToken($networkDataDto->token);
+        Validation::hash($token);
+        $userInfo = $this->sessionStorage->checkIssetToken($token);
         if ($userInfo === null) {
             throw new AuthenticationException();
         }
-        unset($userInfo['sessionId']);
-        $userInfo['ip'] = $networkDataDto->ip;
-        $userInfo['ua'] = $networkDataDto->ua;
-        $userInfo['acceptEncoding'] = $networkDataDto->acceptEncoding;
-        $userInfo['acceptLang'] = $networkDataDto->acceptLanguage;
 
         return $userInfo;
     }

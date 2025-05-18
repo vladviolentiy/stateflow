@@ -13,7 +13,6 @@ use Flow\Id\Enums\AuthMethods;
 use Flow\Id\Enums\AuthVia;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Web
 {
@@ -28,7 +27,7 @@ class AuthController extends Web
     /**
      * @api
      */
-    public function checkIssetClient(): Response
+    public function checkIssetClient(): JsonResponse
     {
         $phone = $this->req->get('authString');
         $type = $this->req->get('type');
@@ -83,14 +82,14 @@ class AuthController extends Web
             new OA\Response(response: 500, description: 'Internal server error'),
         ],
     )]
-    public function passwordAuth(): Response
+    public function passwordAuth(): JsonResponse
     {
         $phone = $this->req->get('authString');
         $type = $this->req->get('authStringType');
         $authString = $this->req->get('password');
         $data = $this->controller->auth($phone, AuthMethods::from($type), AuthVia::Password, $authString);
 
-        return new JsonResponse(SuccessResponse::data($data->toArray()));
+        return $data->toResponse();
     }
 
     /**
@@ -114,12 +113,12 @@ class AuthController extends Web
             new OA\Response(response: 500, description: 'Internal server error'),
         ],
     )]
-    public function register(): Response
+    public function register(): JsonResponse
     {
         $creds = RegisterClientFactory::createFromRequest($this->request);
 
         $uuid = $this->controller->createNewUser($creds);
 
-        return new JsonResponse(SuccessResponse::data($uuid->toArray()));
+        return $uuid->toResponse();
     }
 }

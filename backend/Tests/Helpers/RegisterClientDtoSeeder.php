@@ -11,6 +11,8 @@ use Flow\Id\Models\PrivateKey;
 use Flow\Id\Models\RsaPublicKey;
 use Flow\Tests\Unit\Methods\RSAHelpers;
 use OpenSSLAsymmetricKey;
+use Random\RandomException;
+use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 use VladViolentiy\VivaFramework\Random;
 
 class RegisterClientDtoSeeder
@@ -26,7 +28,13 @@ class RegisterClientDtoSeeder
         return hash_pbkdf2('sha256', self::PASSWORD, $salt, 100000);
     }
 
-    public static function create(): RegisterClientDTO
+    /**
+     * @param non-empty-string $iv
+     * @return RegisterClientDTO
+     * @throws ValidationException
+     * @throws RandomException
+     */
+    public static function renderBy(string $iv): RegisterClientDTO
     {
         $rsaKey = RSAHelpers::createKeyPair(4096);
 
@@ -39,10 +47,9 @@ class RegisterClientDtoSeeder
         }
         /** @var string $publicKey */
         $publicKey = $keyDetail['key'];
-        $iv = EncryptedDataSeeder::randomData();
         $encyptedPrivateKey = self::encryptPrivateKey($rsaKey, $password, $iv);
-        $fName = openssl_encrypt('Violentiy', 'AES-256-CBC', $password, iv: $iv);
-        $lName = openssl_encrypt('Vladislav', 'AES-256-CBC', $password, iv: $iv);
+        $fName = openssl_encrypt('testUserfName', 'AES-256-CBC', $password, iv: $iv);
+        $lName = openssl_encrypt('testUserlName', 'AES-256-CBC', $password, iv: $iv);
         $bDay = openssl_encrypt((new DateTimeImmutable('2000-01-01'))->format('Y-m-d'), 'AES-256-CBC', $password, iv: $iv);
         if ($fName === false || $lName === false || $bDay === false) {
             throw new Exception('Failed to create private key');
@@ -61,6 +68,19 @@ class RegisterClientDtoSeeder
             new EncryptedData($lName),
             new EncryptedData($bDay),
         );
+    }
+
+    public static function create(): RegisterClientDTO
+    {
+        while (true) {
+            try {
+                $iv = EncryptedDataSeeder::randomData();
+
+                return self::renderBy($iv);
+            } catch (ValidationException $exception) {
+
+            }
+        }
     }
 
     private static function encryptPrivateKey(OpenSSLAsymmetricKey $rsaKey, string $password, string $iv): string

@@ -5,7 +5,7 @@ namespace Flow\Core;
 use Error;
 use Exception;
 use Flow\Id\Web\AuthController;
-use Flow\Id\Web\Dashboard;
+use Flow\Id\Web\DashboardController;
 use Flow\Id\Web\Profile\EmailController;
 use Flow\Id\Web\Profile\PhoneConfigController;
 use Flow\Id\Web\Profile\ProfileController;
@@ -14,7 +14,6 @@ use OpenApi\Attributes\Info;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 #[Info(version: '1.0', title: 'Stateflow project API')]
 class Application
@@ -41,7 +40,7 @@ class Application
         ],
         [
             'route' => '/api/id/checkAuth',
-            'class' => Dashboard::class,
+            'class' => DashboardController::class,
             'method' => 'POST',
             'handler' => 'checkAuth',
         ],
@@ -59,7 +58,7 @@ class Application
         ],
         [
             'route' => '/api/id/writeMeta',
-            'class' => Dashboard::class,
+            'class' => DashboardController::class,
             'method' => 'POST',
             'handler' => 'writeMetaInfo',
         ],
@@ -130,7 +129,7 @@ class Application
 
     public static function handle(
         Request $request,
-    ): Response {
+    ): JsonResponse {
         /** @var non-empty-string $uri */
         $uri = $request->server->get('REQUEST_URI');
         $require = explode('?', $uri)[0];
@@ -141,7 +140,7 @@ class Application
                 if ($route['method'] === $request->getMethod() and $route['route'] === $require) {
                     $method = $route['handler'];
                     $class = new $route['class']($request);
-                    /** @var Response $response */
+                    /** @var JsonResponse $response */
                     $response = $class->$method();
 
                     return $response;

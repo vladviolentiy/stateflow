@@ -2,21 +2,25 @@
 
 namespace Flow\Id\Web;
 
-use Flow\Id\Services\Profile\General;
+use Flow\Id\DTO\CheckAuthDTO;
+use Flow\Id\DTO\WriteMetaInfoDTO;
+use Flow\Id\Services\Profile\GeneralService;
 use Flow\Id\Services\Profile\SessionsService;
 use Flow\Id\Storage\SessionStorage;
 use VladViolentiy\VivaFramework\SuccessResponse;
 use Flow\Core\WebPrivate;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class Dashboard extends WebPrivate
+class DashboardController extends WebPrivate
 {
     /**
      * @api
      */
     public function checkAuth(): JsonResponse
     {
-        return new JsonResponse(SuccessResponse::data($this->info));
+        $generalController = new GeneralService($this->storage);
+
+        return $generalController->enrichUserInfo($this->info, CheckAuthDTO::createFromRequest($this->request))->toResponse();
     }
 
     /**
@@ -24,11 +28,10 @@ class Dashboard extends WebPrivate
      */
     public function getBasicInfo(): JsonResponse
     {
-        $generalController = new General($this->storage, $this->info['userId']);
-        $data = $generalController->getBasicInfo();
+        $generalController = new GeneralService($this->storage);
+        $data = $generalController->getBasicInfo($this->info['userId']);
 
         return new JsonResponse(SuccessResponse::data($data));
-
     }
 
     /**
@@ -36,21 +39,8 @@ class Dashboard extends WebPrivate
      */
     public function writeMetaInfo(): JsonResponse
     {
-        $token = $this->req->getServer('HTTP_AUTHORIZATION') ?? '';
-        $ip = $this->req->get('ip');
-        $ua = $this->req->get('ua');
-        $al = $this->req->get('al');
-        $ae = $this->req->get('ae');
-        $lastSeen = $this->req->get('lastSeen');
         $AuthController = new SessionsService(new SessionStorage(), $this->info['userId']);
-        $AuthController->writeHashInfo(
-            $token,
-            $ip,
-            $ua,
-            $ae,
-            $al,
-            $lastSeen,
-        );
+        $AuthController->writeHashInfo(WriteMetaInfoDTO::createFromRequest($this->request), $this->info['sessionId']);
 
         return new JsonResponse([], 204);
     }

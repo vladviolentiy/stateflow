@@ -2,7 +2,7 @@
 
 namespace Flow\Tests\Unit\Id;
 
-use Flow\Id\Services\BaseController;
+use Flow\Id\Services\BaseService;
 use Flow\Id\Services\Profile\PhonesService;
 use Flow\Id\Storage\ArrayStorage\PhoneArrayStorage;
 use Flow\Id\Storage\ArrayStorage\UserArrayStorage;
@@ -12,7 +12,7 @@ use VladViolentiy\VivaFramework\Random;
 
 #[CoversClass(PhonesService::class)]
 #[CoversClass(UserArrayStorage::class)]
-#[CoversClass(BaseController::class)]
+#[CoversClass(BaseService::class)]
 class PhonesControllerTest extends TestCase
 {
     public function testAddNewPhone(): void

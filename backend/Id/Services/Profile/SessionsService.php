@@ -2,13 +2,14 @@
 
 namespace Flow\Id\Services\Profile;
 
-use Flow\Id\Services\BaseController;
+use Flow\Id\DTO\WriteMetaInfoDTO;
+use Flow\Id\Services\BaseService;
 use Flow\Id\Storage\Interfaces\SessionStorageInterface;
 use VladViolentiy\VivaFramework\Exceptions\DatabaseException;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 use VladViolentiy\VivaFramework\Validation;
 
-class SessionsService extends BaseController
+class SessionsService extends BaseService
 {
     /**
      * @param SessionStorageInterface $storage
@@ -63,35 +64,19 @@ class SessionsService extends BaseController
         }
     }
 
-    public function writeHashInfo(
-        string $session,
-        string $encryptedIp,
-        string $encryptedUa,
-        string $encryptedAE,
-        string $encryptedAL,
-        string $encryptedLastSeen,
-    ): void {
-        Validation::hash($session);
-        Validation::nonEmpty($encryptedIp);
-        Validation::nonEmpty($encryptedUa);
-        Validation::nonEmpty($encryptedAE);
-        Validation::nonEmpty($encryptedAL);
-        Validation::nonEmpty($encryptedLastSeen);
-
-        \Flow\Core\Validation::encryptedData($encryptedIp, 'ip');
-        \Flow\Core\Validation::encryptedData($encryptedUa, 'ua');
-        \Flow\Core\Validation::encryptedData($encryptedAE, 'accept encoding');
-        \Flow\Core\Validation::encryptedData($encryptedAL, 'accept language');
-        \Flow\Core\Validation::encryptedData($encryptedLastSeen, 'last seen at');
-
-        $metaId = $this->storage->checkIssetSessionMetaInfo($session, $encryptedIp, $encryptedUa, $encryptedAE, $encryptedAL);
+    /**
+     * @param WriteMetaInfoDTO $info
+     * @param positive-int $sessionId
+     * @return void
+     */
+    public function writeHashInfo(WriteMetaInfoDTO $info, int $sessionId): void
+    {
+        $metaId = $this->storage->checkIssetSessionMetaInfo($info->token, $info->ip, $info->userAgent, $info->acceptEncoding, $info->acceptLanguage);
 
         if ($metaId === null) {
-            /** @var array{userId:positive-int,lang:string,sessionId:positive-int} $sessionId */
-            $sessionId = $this->storage->checkIssetToken($session);
-            $this->storage->insertSessionMeta($sessionId['sessionId'], $encryptedIp, $encryptedUa, $encryptedAE, $encryptedAL, $encryptedLastSeen);
+            $this->storage->insertSessionMeta($sessionId, $info->ip, $info->userAgent, $info->acceptEncoding, $info->acceptLanguage, $info->lastSeen);
         } else {
-            $this->storage->updateLastSeenSessionMeta($metaId, $encryptedLastSeen);
+            $this->storage->updateLastSeenSessionMeta($metaId, $info->lastSeen);
         }
 
     }

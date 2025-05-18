@@ -2,12 +2,12 @@
 
 namespace Flow\Id\Services\Profile;
 
-use Flow\Id\Services\BaseController;
+use Flow\Id\Services\BaseService;
 use Flow\Id\Storage\Interfaces\PhoneStorageInterface;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 use VladViolentiy\VivaFramework\Validation;
 
-class PhonesService extends BaseController
+class PhonesService extends BaseService
 {
     /**
      * @param PhoneStorageInterface $storage

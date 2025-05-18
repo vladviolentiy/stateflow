@@ -2,13 +2,13 @@
 
 namespace Flow\Id\Services\Profile;
 
-use Flow\Id\Services\BaseController;
+use Flow\Id\Mappers\UserEmailMapper;
+use Flow\Id\Services\BaseService;
 use Flow\Id\Storage\Interfaces\EmailStorageInterface;
-use VladViolentiy\VivaFramework\Exceptions\NotfoundException;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 use VladViolentiy\VivaFramework\Validation;
 
-class EmailService extends BaseController
+class EmailService extends BaseService
 {
     /**
      * @param EmailStorageInterface $storage
@@ -16,6 +16,7 @@ class EmailService extends BaseController
      */
     public function __construct(
         private readonly EmailStorageInterface $storage,
+        private readonly UserEmailMapper $userEmailMapper,
         private readonly int $userId,
     ) {
         parent::__construct();
@@ -76,11 +77,7 @@ class EmailService extends BaseController
     {
         Validation::id($itemId);
 
-        $i = $this->storage->getItemById($this->userId, $itemId);
-        if ($i === null) {
-            throw new NotfoundException();
-        }
-        $i['allowAuth'] = (bool) $i['allowAuth'];
+        $i = $this->userEmailMapper->getItemById($itemId);
 
         return $i;
 

@@ -4,7 +4,7 @@ namespace Flow\Id\Models;
 
 use VladViolentiy\VivaFramework\Validation;
 
-class RsaPublicKey
+readonly class RsaPublicKey
 {
     /** @var non-empty-string */
     public string $value;

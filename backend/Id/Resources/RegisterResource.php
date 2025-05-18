@@ -3,8 +3,10 @@
 namespace Flow\Id\Resources;
 
 use Flow\Core\Interfaces\ResponseInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Uid\UuidV4;
 use OpenApi\Attributes as OA;
+use VladViolentiy\VivaFramework\SuccessResponse;
 
 #[OA\Schema(
     schema: 'RegisterResource',
@@ -24,6 +26,13 @@ final readonly class RegisterResource implements ResponseInterface
         return [
             $this->uuid->toRfc4122(),
         ];
+    }
+
+    public function toResponse(): JsonResponse
+    {
+        return new JsonResponse(SuccessResponse::data([
+            'uuid' => $this->uuid->toRfc4122(),
+        ]));
     }
 
     /**

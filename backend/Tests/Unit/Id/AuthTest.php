@@ -13,13 +13,14 @@ use Flow\Id\Models\Password;
 use Flow\Id\Models\PrivateKey;
 use Flow\Id\Models\RsaPublicKey;
 use Flow\Id\Services\AuthService;
-use Flow\Id\Services\BaseController;
+use Flow\Id\Services\BaseService;
 use Flow\Id\Enums\AuthMethods;
 use Flow\Id\Enums\AuthVia;
 use Flow\Id\Storage\ArrayStorage\EmailArrayStorage;
 use Flow\Id\Storage\ArrayStorage\PhoneArrayStorage;
 use Flow\Id\Storage\ArrayStorage\SessionArrayStorage;
 use Flow\Id\Storage\ArrayStorage\UserArrayStorage;
+use Flow\Tests\Helpers\RegisterClientDtoSeeder;
 use Flow\Tests\Unit\Methods\RSAHelpers;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ use Symfony\Component\Uid\Uuid;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 
 #[CoversClass(AuthService::class)]
-#[CoversClass(BaseController::class)]
+#[CoversClass(BaseService::class)]
 #[CoversClass(UserArrayStorage::class)]
 #[CoversClass(Validation::class)]
 #[CoversClass(EncryptedDataValidator::class)]
@@ -89,26 +90,9 @@ class AuthTest extends TestCase
 
     private function createNewUser(): bool
     {
-        $password = hash('sha384', 'testPassword');
-        $hash = hash('sha384', 'TESTDATA');
-        $iv = base64_encode('1234567890abcdef');
-        $salt = base64_encode(random_bytes(16));
+        $user = RegisterClientDtoSeeder::create();
 
-        $public = RSAHelpers::createPublicKey(2048);
-
-        $dto = new RegisterClientDTO(
-            new Password($password),
-            $iv,
-            $salt,
-            $hash,
-            new RsaPublicKey($public),
-            new PrivateKey($password),
-            new EncryptedData(''),
-            new EncryptedData(''),
-            new EncryptedData(''),
-        );
-
-        $uuid = $this->auth->createNewUser($dto);
+        $uuid = $this->auth->createNewUser($user);
 
         $this->uuidList[] = $uuid->uuid;
 

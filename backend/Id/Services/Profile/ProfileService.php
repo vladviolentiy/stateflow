@@ -2,12 +2,12 @@
 
 namespace Flow\Id\Services\Profile;
 
-use Flow\Id\Services\BaseController;
+use Flow\Id\Services\BaseService;
 use Flow\Id\Models\Password;
 use Flow\Id\Models\PrivateKey;
 use Flow\Id\Storage\Interfaces\UserStorageInterface;
 
-class ProfileService extends BaseController
+class ProfileService extends BaseService
 {
     /**
      * @param UserStorageInterface $storage

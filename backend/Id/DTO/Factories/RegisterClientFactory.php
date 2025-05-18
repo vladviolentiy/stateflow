@@ -53,6 +53,8 @@ class RegisterClientFactory implements CreateFromRequestInterface
 
         self::validate($iv, $salt, $hash);
 
+        $hash = hash('sha384', $hash . getenv('APP_TOKEN'));
+
         return new RegisterClientDTO(
             new Password((string) $request->getPayload()->get('password')),
             $iv,

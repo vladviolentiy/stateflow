@@ -52,13 +52,13 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from 'vue'
+import { computed, ref } from 'vue'
 import Encryption from '@/security/Encryption'
 import Hashing from '@/security/Hashing'
 import Security from '@/security/Security'
 import AuthGateway from '@/gateway/AuthGateway'
 import Mathematics from '@/security/Mathematics'
-import {appStore} from "@/stores/AppStore.ts";
+import { appStore } from '@/stores/AppStore.ts'
 
 const store = appStore()
 

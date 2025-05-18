@@ -26,16 +26,15 @@
 </template>
 
 <script setup lang="ts">
+import { appStore } from '@/stores/AppStore.ts'
+import type { sessionListResponseItem } from '@/gateway/Interfaces/DashboardGatewayIntefaces.ts'
+import { computed, onMounted, ref } from 'vue'
+import Security from '@/security/Security.ts'
+import Encryption from '@/security/Encryption.ts'
 
-import {appStore} from "@/stores/AppStore.ts";
-import type {sessionListResponseItem} from "@/gateway/Interfaces/DashboardGatewayIntefaces.ts";
-import {computed, onMounted, ref} from "vue";
-import Security from "@/security/Security.ts";
-import Encryption from "@/security/Encryption.ts";
-
-const store = appStore();
-const list = ref<sessionListResponseItem[]>([]);
-const cryptoKey = ref<CryptoKey|null>(null)
+const store = appStore()
+const list = ref<sessionListResponseItem[]>([])
+const cryptoKey = ref<CryptoKey | null>(null)
 
 onMounted(async function () {
   cryptoKey.value = await Security.getDerivedKey()
@@ -46,36 +45,36 @@ onMounted(async function () {
   }
 })
 
-const currentSession = computed(()=>{
+const currentSession = computed(() => {
   return localStorage.getItem('authToken') ?? ''.toLowerCase()
-});
+})
 
 async function remapListElements(response: sessionListResponseItem[]) {
   const iv = localStorage.getItem('iv') ?? ''
   console.log(response)
   list.value = await Promise.all(
-      response.map(async item => {
-        if (cryptoKey.value !== null) {
-          item.uas = await Promise.all(
-              item.uas.map(async itemUa => {
-                if (cryptoKey.value !== null) {
-                  itemUa = await Encryption.decryptAES(itemUa, cryptoKey.value, iv)
-                }
-                return itemUa
-              })
-          )
-          item.ips = await Promise.all(
-              item.ips.map(async itemIp => {
-                if (cryptoKey.value !== null) {
-                  itemIp = await Encryption.decryptAES(itemIp, cryptoKey.value, iv)
-                }
-                return itemIp
-              })
-          )
-        }
+    response.map(async item => {
+      if (cryptoKey.value !== null) {
+        item.uas = await Promise.all(
+          item.uas.map(async itemUa => {
+            if (cryptoKey.value !== null) {
+              itemUa = await Encryption.decryptAES(itemUa, cryptoKey.value, iv)
+            }
+            return itemUa
+          })
+        )
+        item.ips = await Promise.all(
+          item.ips.map(async itemIp => {
+            if (cryptoKey.value !== null) {
+              itemIp = await Encryption.decryptAES(itemIp, cryptoKey.value, iv)
+            }
+            return itemIp
+          })
+        )
+      }
 
-        return item
-      })
+      return item
+    })
   )
   console.log(list.value)
 }
