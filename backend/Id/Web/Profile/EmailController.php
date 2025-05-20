@@ -56,7 +56,7 @@ class EmailController extends WebPrivate
         $itemId = (int) $this->req->get('id');
         $info = $this->controller->getEmailItem($itemId);
 
-        return new JsonResponse(SuccessResponse::data($info));
+        return $info->toResponse();
     }
 
     /**
