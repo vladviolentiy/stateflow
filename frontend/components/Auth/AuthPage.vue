@@ -21,7 +21,7 @@
   </div>
 
   <div class="row justify-content-center align-items-center" style="height: 100vh">
-    <div class="col-12">
+    <div class="col-md-6">
       <h4 class="text-center">{{ store.Localization.authentication }}</h4>
       <input
         type="text"
@@ -67,14 +67,15 @@ import Validation from '@/security/Validation'
 import { useRouter } from 'vue-router'
 import type { CountryCode } from '@/localization/LocalizationInterface.ts'
 
-const selectedLang = ref<CountryCode>('ru')
+const store = appStore()
+
+const selectedLang = ref<CountryCode>(store.CurrentLocalization)
 const authString = ref('')
 const authErrorCode = ref<errorCodeList | null>(null)
 const step = ref<'password' | 'finger' | 'auth'>('auth')
 const authPassword = ref<string>('')
 const authSalt = ref<string>('')
 
-const store = appStore()
 const router = useRouter()
 
 async function getUserNametype(): Promise<'phone' | 'uuid' | 'email'> {
