@@ -11,10 +11,10 @@ readonly class CheckAuthDTO implements CreateFromRequestInterface, DtoInterface
 {
     /**
      * @param non-empty-string $token
-     * @param string $ip
-     * @param string $ua
-     * @param string $acceptEncoding
-     * @param string $acceptLanguage
+     * @param non-empty-string $ip
+     * @param non-empty-string $ua
+     * @param non-empty-string $acceptEncoding
+     * @param non-empty-string $acceptLanguage
      */
     public function __construct(
         public string $token,
@@ -27,14 +27,23 @@ readonly class CheckAuthDTO implements CreateFromRequestInterface, DtoInterface
     public static function createFromRequest(Request $request): self
     {
         $token = $request->server->getString('HTTP_AUTHORIZATION');
+        $ip = $request->server->getString('REMOTE_ADDR');
+        $ua = $request->server->getString('HTTP_USER_AGENT');
+        $acceptEncoding = $request->server->getString('HTTP_ACCEPT_ENCODING');
+        $acceptLanguage = $request->server->getString('HTTP_ACCEPT_LANGUAGE');
+
         Validation::hash($token);
+        Validation::nonEmpty($ip);
+        Validation::nonEmpty($ua);
+        Validation::nonEmpty($acceptEncoding);
+        Validation::nonEmpty($acceptLanguage);
 
         return new self(
             $token,
-            $request->server->getString('REMOTE_ADDR'),
-            $request->server->getString('HTTP_USER_AGENT'),
-            $request->server->getString('HTTP_ACCEPT_ENCODING'),
-            $request->server->getString('HTTP_ACCEPT_LANGUAGE'),
+            $ip,
+            $ua,
+            $acceptEncoding,
+            $acceptLanguage,
         );
     }
 }
