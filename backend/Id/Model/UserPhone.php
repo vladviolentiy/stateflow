@@ -2,7 +2,7 @@
 
 namespace Flow\Id\Model;
 
-readonly class UserPhone
+final readonly class UserPhone
 {
     public function __construct(
         public int $id,

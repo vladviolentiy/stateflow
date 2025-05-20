@@ -2,7 +2,9 @@
 
 namespace Flow\Id\Model;
 
-readonly class User
+use Flow\Core\Interfaces\ModelInterface;
+
+final readonly class User implements ModelInterface
 {
     public function __construct(
         public int $id,
