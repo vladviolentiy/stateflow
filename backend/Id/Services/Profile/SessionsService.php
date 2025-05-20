@@ -52,7 +52,7 @@ class SessionsService extends BaseService
      */
     public function killSession(
         string $hash,
-        bool   $returnAvailable,
+        bool $returnAvailable,
     ): ?array {
         $hash = mb_strtolower($hash);
         Validation::hash($hash);
