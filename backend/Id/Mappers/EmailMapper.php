@@ -2,11 +2,11 @@
 
 namespace Flow\Id\Mappers;
 
-use Flow\Id\Model\UserEmail;
+use Flow\Id\Resources\GetEmailItemResource;
 use Flow\Id\Storage\Interfaces\EmailStorageInterface;
 use VladViolentiy\VivaFramework\Exceptions\NotfoundException;
 
-readonly class UserEmailMapper
+readonly class EmailMapper
 {
     /**
      * @param EmailStorageInterface $emailStorage
@@ -17,7 +17,12 @@ readonly class UserEmailMapper
         private int $userId,
     ) {}
 
-    public function getItemById(int $id): UserEmail
+    /**
+     * @param positive-int $id
+     * @return GetEmailItemResource
+     * @throws NotfoundException
+     */
+    public function getItemById(int $id): GetEmailItemResource
     {
         $data = $this->emailStorage->getItemById($this->userId, $id);
 
@@ -25,14 +30,6 @@ readonly class UserEmailMapper
             throw new NotfoundException();
         }
 
-        return new UserEmail(
-            $id,
-            $this->userId,
-            null,
-            $data['emailEncrypted'],
-            (bool) $data['allowAuth'],
-            null,
-        );
-
+        return GetEmailItemResource::fromState($data);
     }
 }

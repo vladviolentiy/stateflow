@@ -2,7 +2,8 @@
 
 namespace Flow\Id\Services\Profile;
 
-use Flow\Id\Mappers\UserEmailMapper;
+use Flow\Id\Mappers\EmailMapper;
+use Flow\Id\Resources\GetEmailItemResource;
 use Flow\Id\Services\BaseService;
 use Flow\Id\Storage\Interfaces\EmailStorageInterface;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
@@ -10,16 +11,18 @@ use VladViolentiy\VivaFramework\Validation;
 
 class EmailService extends BaseService
 {
+    private readonly EmailMapper $userEmailMapper;
+
     /**
      * @param EmailStorageInterface $storage
      * @param positive-int $userId
      */
     public function __construct(
         private readonly EmailStorageInterface $storage,
-        private readonly UserEmailMapper $userEmailMapper,
-        private readonly int $userId,
+        private readonly int                   $userId,
     ) {
         parent::__construct();
+        $this->userEmailMapper = new EmailMapper($this->storage, $this->userId);
     }
 
     /**
@@ -71,9 +74,9 @@ class EmailService extends BaseService
 
     /**
      * @param int $itemId
-     * @return array{emailEncrypted:string,allowAuth:bool}
+     * @return GetEmailItemResource
      */
-    public function getEmailItem(int $itemId): array
+    public function getEmailItem(int $itemId): GetEmailItemResource
     {
         Validation::id($itemId);
 
