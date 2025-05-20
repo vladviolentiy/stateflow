@@ -3,26 +3,26 @@ import type { LocalizationInterface } from './LocalizationInterface'
 const LocalizationUa: LocalizationInterface = {
   register: 'Реєстрація',
   authentication: 'Авторизація',
-  logout: 'Вийти з системи',
+  logout: 'Вийти',
   enter: 'Увійти',
   delete: 'Видалити',
-  enterAuthString: 'EmailController, телефон або uuid',
-  enterPassword: 'Введите пароль',
+  enterAuthString: 'Email, телефон або UUID',
+  enterPassword: 'Введіть пароль',
   add: 'Додати',
   close: 'Закрити',
   next: 'Далі',
   edit: 'Редагувати',
   validation: {
-    fNameNull: "Ім'я не введено",
-    lNameNull: 'Прізвище не введено',
+    fNameNull: "Ім'я не введене",
+    lNameNull: 'Прізвище не введене',
     dobNull: 'Дата народження не введена',
-    emailNull: 'EmailController не введено',
+    emailNull: 'Email не введений',
     phoneNull: 'Телефон не введений',
-    emailIncorrect: 'EmailController введено некоректно',
-    phoneIncorrect: ' Телефон введено некоректно',
-    dobIncorrect: 'Дата народження введена некоректно',
+    emailIncorrect: 'Email введений невірно',
+    phoneIncorrect: 'Телефон введений невірно',
+    dobIncorrect: 'Дата народження введена невірно',
     passwordNotRepeat: 'Паролі не співпадають',
-    passwordNull: 'Пароль не введено'
+    passwordNull: 'Пароль не введений'
   },
   services: 'Сервіси',
   welcome: 'Ласкаво просимо',
@@ -40,15 +40,15 @@ const LocalizationUa: LocalizationInterface = {
   },
   email: {
     add: 'Додати email',
-    notAdded: 'EmailController адреси не додані'
+    notAdded: 'Email адреси не додані'
   },
   errorCodes: {
     0: 'Помилка мережі',
     1: 'Помилка валідації',
-    2: 'Помилка запиту до БД',
+    2: 'Помилка запиту до бази даних',
     3: 'Не знайдено',
-    4: 'Пароль введено невірно',
-    5: 'Неправильний формат введення',
+    4: 'Невірний пароль',
+    5: 'Невірний формат введення',
     403: 'Доступ заборонено',
     500: 'Внутрішня помилка сервісу'
   }
