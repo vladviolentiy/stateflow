@@ -32,7 +32,7 @@ interface EmailStorageInterface
     /**
      * @param positive-int $userId
      * @param positive-int $itemId
-     * @return array{emailEncrypted:string,allowAuth:int}|null
+     * @return array{emailEncrypted:non-empty-string,allowAuth:int<0,1>}|null
      */
     public function getItemById(int $userId, int $itemId): ?array;
 

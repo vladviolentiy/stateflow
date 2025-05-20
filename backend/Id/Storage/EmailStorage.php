@@ -34,7 +34,7 @@ final class EmailStorage extends MysqliV2 implements EmailStorageInterface
 
     public function getItemById(int $userId, int $itemId): ?array
     {
-        /** @var array{emailEncrypted:string,allowAuth:int}|null $info */
+        /** @var array{emailEncrypted:non-empty-string,allowAuth:int<0,1>}|null $info */
         $info = $this->executeQuery('SELECT emailEncrypted, allowAuth FROM usersEmails WHERE id=? and userId=?', [$itemId, $userId])->fetch_array(MYSQLI_ASSOC);
 
         return $info;
