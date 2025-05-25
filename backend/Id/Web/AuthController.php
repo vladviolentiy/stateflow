@@ -29,8 +29,8 @@ class AuthController extends Web
      */
     public function checkIssetClient(): JsonResponse
     {
-        $phone = $this->req->get('authString');
-        $type = $this->req->get('type');
+        $phone = $this->request->request->getString('authString');
+        $type = $this->request->request->getString('type');
         $data = $this->controller->getAuthDataForUser($phone, AuthMethods::from($type));
 
         return new JsonResponse(SuccessResponse::data($data));
@@ -84,9 +84,9 @@ class AuthController extends Web
     )]
     public function passwordAuth(): JsonResponse
     {
-        $phone = $this->req->get('authString');
-        $type = $this->req->get('authStringType');
-        $authString = $this->req->get('password');
+        $phone = $this->request->request->getString('authString');
+        $type = $this->request->request->getString('authStringType');
+        $authString = $this->request->request->getString('password');
         $data = $this->controller->auth($phone, AuthMethods::from($type), AuthVia::Password, $authString);
 
         return $data->toResponse();

@@ -23,8 +23,8 @@ class ProfileController extends WebPrivate
      */
     public function changePassword(): JsonResponse
     {
-        $password = $this->req->get('password');
-        $encryptedKey = $this->req->get('encryptedKey');
+        $password = $this->request->request->getString('password');
+        $encryptedKey = $this->request->request->getString('encryptedKey');
 
         $this->controller->updatePassword($encryptedKey, $password);
 

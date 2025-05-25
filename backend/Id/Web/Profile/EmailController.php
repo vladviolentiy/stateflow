@@ -24,9 +24,9 @@ class EmailController extends WebPrivate
      */
     public function addNewEmail(): JsonResponse
     {
-        $emailEncrypted = $this->req->get('emailEncrypted');
-        $emailHash = $this->req->get('emailHash');
-        $allowAuth = (bool) $this->req->get('allowAuth');
+        $emailEncrypted = $this->request->request->getString('emailEncrypted');
+        $emailHash = $this->request->request->getString('emailHash');
+        $allowAuth = $this->request->request->getBoolean('allowAuth');
 
         $this->controller->addNewEmail($emailEncrypted, $emailHash, $allowAuth);
 
@@ -38,10 +38,10 @@ class EmailController extends WebPrivate
      */
     public function editEmail(): JsonResponse
     {
-        $itemId = (int) $this->req->get('itemId');
-        $emailEncrypted = $this->req->get('emailEncrypted');
-        $emailHash = $this->req->get('emailHash');
-        $allowAuth = (bool) $this->req->get('allowAuth');
+        $itemId = $this->request->request->getInt('itemId');
+        $emailEncrypted = $this->request->request->getString('emailEncrypted');
+        $emailHash = $this->request->request->getString('emailHash');
+        $allowAuth = $this->request->request->getBoolean('allowAuth');
 
         $this->controller->editItem($itemId, $emailEncrypted, $emailHash, $allowAuth);
 
@@ -53,7 +53,7 @@ class EmailController extends WebPrivate
      */
     public function getEmailItem(): JsonResponse
     {
-        $itemId = (int) $this->req->get('id');
+        $itemId = $this->request->request->getInt('id');
         $info = $this->controller->getEmailItem($itemId);
 
         return $info->toResponse();
@@ -74,7 +74,7 @@ class EmailController extends WebPrivate
      */
     public function deleteEmail(): JsonResponse
     {
-        $id = (int) $this->req->get('id');
+        $id = $this->request->request->getInt('id');
         $this->controller->deleteEmail($id);
 
         return $this->getEmailList();

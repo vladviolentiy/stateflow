@@ -38,9 +38,9 @@ class PhoneConfigController extends WebPrivate
      */
     public function addNewPhone(): JsonResponse
     {
-        $emailEncrypted = $this->req->get('phoneEncrypted');
-        $emailHash = $this->req->get('phoneHash');
-        $allowAuth = (bool) $this->req->get('allowAuth');
+        $emailEncrypted = $this->request->request->getString('phoneEncrypted');
+        $emailHash = $this->request->request->getString('phoneHash');
+        $allowAuth = $this->request->request->getBoolean('allowAuth');
 
         $this->controller->addNewPhone($emailEncrypted, $emailHash, $allowAuth);
 
