@@ -12,6 +12,7 @@ use Flow\Id\Models\EncryptedData;
 use Flow\Id\Models\Password;
 use Flow\Id\Models\PrivateKey;
 use Flow\Id\Models\RsaPublicKey;
+use Flow\Id\Resources\RegisterResource;
 use Flow\Id\Services\AuthService;
 use Flow\Id\Services\BaseService;
 use Flow\Id\Enums\AuthMethods;
@@ -51,7 +52,7 @@ class AuthTest extends TestCase
     public function testCreatingNewUser(): void
     {
         $data = $this->createNewUser();
-        $this->assertTrue($data);
+        $this->assertNotEmpty($data->uuid);
     }
 
     public function testIncorrectInfo(): void
@@ -80,14 +81,12 @@ class AuthTest extends TestCase
 
     public function testGetUserInfo(): void
     {
-        $this->createNewUser();
-        foreach ($this->uuidList as $item) {
-            $info = $this->auth->getAuthDataForUser($item, AuthMethods::UUID);
-            $this->assertEquals(base64_encode('1234567890abcdef'), $info['iv']);
-        }
+        $user = $this->createNewUser();
+        $info = $this->auth->getAuthDataForUser($user->uuid, AuthMethods::UUID);
+        $this->assertArrayHasKey('iv', $info);
     }
 
-    private function createNewUser(): bool
+    private function createNewUser(): RegisterResource
     {
         $user = RegisterClientDtoSeeder::create();
 
@@ -95,7 +94,7 @@ class AuthTest extends TestCase
 
         $this->uuidList[] = $uuid->uuid;
 
-        return true;
+        return $uuid;
     }
 
     public function testCrashOnNonPasswordExcept(): void

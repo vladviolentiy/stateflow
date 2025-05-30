@@ -2,6 +2,7 @@
 
 namespace Flow\Id\Web\Profile;
 
+use Flow\Core\Enums\ServicesEnum;
 use Flow\Core\WebPrivate;
 use Flow\Id\Services\Profile\EmailService;
 use Flow\Id\Storage\EmailStorage;
@@ -16,7 +17,9 @@ class EmailController extends WebPrivate
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->controller = new EmailService(new EmailStorage(), $this->info['userId']);
+        $this->controller = new EmailService(new EmailStorage(
+            $this->databaseConnectionFactory->createConnection(ServicesEnum::Id),
+        ), $this->info['userId']);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\Id\Storage\Migrations;
+namespace Flow\Notification\Storage\Migrations;
 
 use VladViolentiy\VivaFramework\Databases\Interfaces\MigrationInterfaceV2;
 use VladViolentiy\VivaFramework\Databases\MigrationV2\MigrationsClassInterfaceV2;
@@ -14,10 +14,6 @@ abstract class Migration extends MysqliV2 implements MigrationInterfaceV2
      * @var class-string[]
      */
     public static array $list = [
-        Migration_0000::class,
         Migration_0001::class,
-        Migration_0002::class,
-        Migration_0003::class,
-        Migration_0004::class,
     ];
 }

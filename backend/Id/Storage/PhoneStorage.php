@@ -2,11 +2,17 @@
 
 namespace Flow\Id\Storage;
 
+use Flow\Core\DatabaseConnectionFactory;
 use Flow\Id\Storage\Interfaces\PhoneStorageInterface;
 use VladViolentiy\VivaFramework\Databases\MysqliV2;
 
 final class PhoneStorage extends MysqliV2 implements PhoneStorageInterface
 {
+    public function __construct()
+    {
+        $this->setDb(DatabaseConnectionFactory::getInstance());
+    }
+
     public function getPhonesList(int $userId): array
     {
         /** @var list<array{id:int,phone:string}> $data */

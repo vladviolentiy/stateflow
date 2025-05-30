@@ -4,7 +4,6 @@ namespace Flow\Id\Web\Profile;
 
 use Flow\Core\WebPrivate;
 use Flow\Id\Services\Profile\SessionsService;
-use Flow\Id\Storage\SessionStorage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use VladViolentiy\VivaFramework\SuccessResponse;
@@ -16,7 +15,7 @@ class SessionsController extends WebPrivate
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->sessions = new SessionsService(new SessionStorage(), $this->info['userId']);
+        $this->sessions = new SessionsService($this->sessionStorage, $this->info['userId']);
     }
 
     /**

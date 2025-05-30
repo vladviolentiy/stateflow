@@ -3,10 +3,16 @@
 namespace Flow\Id\Storage;
 
 use Flow\Id\Storage\Interfaces\SessionStorageInterface;
+use mysqli;
 use VladViolentiy\VivaFramework\Databases\MysqliV2;
 
 final class SessionStorage extends MysqliV2 implements SessionStorageInterface
 {
+    public function __construct(mysqli $connection)
+    {
+        $this->setDb($connection);
+    }
+
     public function getSessionsForUser(int $userId): array
     {
         /** @var list<array{authHash:non-empty-string,uas:non-empty-string,ips:non-empty-string,createdAt:non-empty-string}> $i */

@@ -71,7 +71,12 @@ class AuthService extends BaseService
         }
 
         if ($userInfo === null) {
-            throw new NotfoundException();
+            return [
+                'userId' => 1,
+                'password' => 'empty',
+                'salt' => base64_encode(substr(hash('sha384', getenv('APP_TOKEN') . 'salt' . $userInfo, true), 0, 16)),
+                'iv' => base64_encode(substr(hash('sha384', getenv('APP_TOKEN') . 'iv' . $userInfo, true), 0, 16)),
+            ];
         }
 
         return $userInfo;
@@ -124,7 +129,7 @@ class AuthService extends BaseService
 
         $userInfo = $this->getUserInfoAuth($userInfo, $authTypesEnum);
         if (!password_verify($authString, $userInfo['password'])) {
-            throw new IncorrectPasswordException();
+            throw new NotfoundException();
         }
         $hash = Random::hash(Random::get());
         $this->sessionStorage->insertSession($hash, $userInfo['userId']);

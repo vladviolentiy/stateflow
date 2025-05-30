@@ -5,6 +5,7 @@ namespace Flow\Id\Services\Profile;
 use Flow\Id\DTO\CheckAuthDTO;
 use Flow\Id\Resources\CheckAuthResource;
 use Flow\Id\Storage\Interfaces\UserStorageInterface;
+use Flow\Notification\Services\NotificationService;
 use VladViolentiy\VivaFramework\Exceptions\NotfoundException;
 
 class GeneralService
@@ -37,12 +38,13 @@ class GeneralService
      * @param CheckAuthDTO $networkDataDto
      * @return CheckAuthResource
      */
-    public function enrichUserInfo(array $userInfo, CheckAuthDTO $networkDataDto): CheckAuthResource
+    public function enrichUserInfo(array $userInfo, CheckAuthDTO $networkDataDto, NotificationService $notificationService): CheckAuthResource
     {
         $userInfo['ip'] = $networkDataDto->ip;
         $userInfo['ua'] = $networkDataDto->ua;
         $userInfo['acceptEncoding'] = $networkDataDto->acceptEncoding;
         $userInfo['acceptLang'] = $networkDataDto->acceptLanguage;
+        $userInfo['unreadedNotificationCount'] = $notificationService->getNotificationCount();
 
         return CheckAuthResource::fromState($userInfo);
     }

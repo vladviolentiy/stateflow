@@ -2,6 +2,7 @@
 
 namespace Flow\Id\Web;
 
+use Flow\Core\Enums\ServicesEnum;
 use Flow\Core\Web;
 use Flow\Id\DTO\Factories\RegisterClientFactory;
 use Flow\Id\Services\AuthService;
@@ -21,7 +22,9 @@ class AuthController extends Web
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->controller = new AuthService(new UserStorage(), new SessionStorage());
+        $conn = $this->databaseConnectionFactory->createConnection(ServicesEnum::Id);
+
+        $this->controller = new AuthService(new UserStorage($conn), new SessionStorage($conn));
     }
 
     /**

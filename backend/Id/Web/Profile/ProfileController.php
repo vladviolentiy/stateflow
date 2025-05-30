@@ -4,7 +4,6 @@ namespace Flow\Id\Web\Profile;
 
 use Flow\Core\WebPrivate;
 use Flow\Id\Services\Profile\ProfileService;
-use Flow\Id\Storage\UserStorage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -15,7 +14,7 @@ class ProfileController extends WebPrivate
     public function __construct(Request $request)
     {
         parent::__construct($request);
-        $this->controller = new ProfileService(new UserStorage(), $this->info['userId']);
+        $this->controller = new ProfileService($this->userStorage, $this->info['userId']);
     }
 
     /**

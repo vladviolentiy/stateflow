@@ -3,13 +3,14 @@
 namespace Flow\Id\Storage;
 
 use Flow\Id\Storage\Interfaces\EmailStorageInterface;
+use mysqli;
 use VladViolentiy\VivaFramework\Databases\MysqliV2;
 
 final class EmailStorage extends MysqliV2 implements EmailStorageInterface
 {
-    public function __construct()
+    public function __construct(mysqli $mysqli)
     {
-        $this->setDb(DatabaseSingleton::getInstance());
+        $this->setDb($mysqli);
     }
 
     public function getByUserId(int $userId): array

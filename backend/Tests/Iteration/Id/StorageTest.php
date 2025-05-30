@@ -39,7 +39,7 @@ class StorageTest extends TestCase
     {
         InitApp::initTestEnv();
         $this->conn = Database::createConnection(ServicesEnum::Id);
-        $this->storage = new UserStorage();
+        $this->storage = new UserStorage($this->conn);
     }
 
     public function testInsertUser(): void
@@ -56,7 +56,7 @@ class StorageTest extends TestCase
         );
         $emailHash = Random::hash('test@test.com');
         $phoneStorage = new PhoneStorage();
-        $emailStorage = new EmailStorage();
+        $emailStorage = new EmailStorage($this->conn);
         $emailStorage->insertNew($userId, 'email', $emailHash, true);
         $emailInfo = $this->storage->getUserByEmail($emailHash);
         $phoneHash = Random::hash('375333333333');

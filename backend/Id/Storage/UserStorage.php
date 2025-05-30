@@ -12,10 +12,9 @@ use VladViolentiy\VivaFramework\Databases\MysqliV2;
 
 final class UserStorage extends MysqliV2 implements UserStorageInterface
 {
-    public function __construct()
+    public function __construct(\mysqli $conn)
     {
-        $this->setDb(DatabaseSingleton::getInstance());
-
+        $this->setDb($conn);
     }
 
     public function getUserByEmail(string $hashedEmail): ?array

@@ -13,6 +13,7 @@ final readonly class CheckAuthResource implements ResponseInterface
         private string $ua,
         private string $acceptEncoding,
         private string $acceptLang,
+        private int $unreadedNotificationCount,
     ) {}
 
     public function toArray(): array
@@ -22,6 +23,7 @@ final readonly class CheckAuthResource implements ResponseInterface
             'ua' => $this->ua,
             'accept_encoding' => $this->acceptEncoding,
             'accept_lang' => $this->acceptLang,
+            'unreaded_notification_co' => $this->unreadedNotificationCount,
         ];
     }
 
@@ -31,7 +33,7 @@ final readonly class CheckAuthResource implements ResponseInterface
     }
 
     /**
-     * @param array{ip: string, ua: string, acceptEncoding: string, acceptLang: string} $state
+     * @param array{ip: string, ua: string, acceptEncoding: string, acceptLang: string, unreadedNotificationCount: int<0,max>} $state
      * @return static
      */
     public static function fromState(array $state): static
@@ -41,6 +43,7 @@ final readonly class CheckAuthResource implements ResponseInterface
             $state['ua'],
             $state['acceptEncoding'],
             $state['acceptLang'],
+            $state['unreadedNotificationCount'],
         );
     }
 }
