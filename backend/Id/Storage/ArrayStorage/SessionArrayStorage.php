@@ -55,7 +55,7 @@ class SessionArrayStorage implements SessionStorageInterface
     public function checkIssetSessionMetaInfo(string $session, EncryptedData $encryptedIp, EncryptedData $encryptedUa, EncryptedData $encryptedAE, EncryptedData $encryptedAL): ?int
     {
         $user = $this->checkIssetToken($session);
-        if($user === null){
+        if ($user === null) {
             return null;
         }
         foreach ($this->sessionsMeta as $index => $meta) {

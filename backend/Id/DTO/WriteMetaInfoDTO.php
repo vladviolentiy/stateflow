@@ -37,6 +37,7 @@ readonly class WriteMetaInfoDTO implements CreateFromRequestInterface, DTOInterf
         $encryptedLastSeen =  $request->request->getString('lastSeen');
 
         Validation::hash($session);
+
         return new self(
             $session,
             new EncryptedData($encryptedIp, 'ip'),
