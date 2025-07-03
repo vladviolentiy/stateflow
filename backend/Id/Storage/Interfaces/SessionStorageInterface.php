@@ -2,6 +2,8 @@
 
 namespace Flow\Id\Storage\Interfaces;
 
+use Flow\Id\ValueObject\EncryptedData;
+
 interface SessionStorageInterface
 {
     /**
@@ -27,46 +29,46 @@ interface SessionStorageInterface
 
     /**
      * @param positive-int $sessionId
-     * @param non-empty-string $encryptedIp
-     * @param non-empty-string $encryptedUa
-     * @param non-empty-string $encryptedAE
-     * @param non-empty-string $encryptedAL
-     * @param non-empty-string $encryptedLastSeenAt
+     * @param EncryptedData $encryptedIp
+     * @param EncryptedData $encryptedUa
+     * @param EncryptedData $encryptedAE
+     * @param EncryptedData $encryptedAL
+     * @param EncryptedData $encryptedLastSeenAt
      * @return void
      */
     public function insertSessionMeta(
         int $sessionId,
-        string $encryptedIp,
-        string $encryptedUa,
-        string $encryptedAE,
-        string $encryptedAL,
-        string $encryptedLastSeenAt,
+        EncryptedData $encryptedIp,
+        EncryptedData $encryptedUa,
+        EncryptedData $encryptedAE,
+        EncryptedData $encryptedAL,
+        EncryptedData $encryptedLastSeenAt,
     ): void;
 
     /**
      * @param positive-int $sessionMetaInfoId
-     * @param non-empty-string $encryptedLastSeenAt
+     * @param EncryptedData $encryptedLastSeenAt
      * @return void
      */
     public function updateLastSeenSessionMeta(
         int $sessionMetaInfoId,
-        string $encryptedLastSeenAt,
+        EncryptedData $encryptedLastSeenAt,
     ): void;
 
     /**
      * @param non-empty-string $session
-     * @param non-empty-string $encryptedIp
-     * @param non-empty-string $encryptedUa
-     * @param non-empty-string $encryptedAE
-     * @param non-empty-string $encryptedAL
+     * @param EncryptedData $encryptedIp
+     * @param EncryptedData $encryptedUa
+     * @param EncryptedData $encryptedAE
+     * @param EncryptedData $encryptedAL
      * @return positive-int|null
      */
     public function checkIssetSessionMetaInfo(
         string $session,
-        string $encryptedIp,
-        string $encryptedUa,
-        string $encryptedAE,
-        string $encryptedAL,
+        EncryptedData $encryptedIp,
+        EncryptedData $encryptedUa,
+        EncryptedData $encryptedAE,
+        EncryptedData $encryptedAL,
     ): ?int;
 
     /**

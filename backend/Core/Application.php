@@ -4,12 +4,12 @@ namespace Flow\Core;
 
 use Error;
 use Exception;
-use Flow\Id\Web\AuthController;
-use Flow\Id\Web\DashboardController;
-use Flow\Id\Web\Profile\EmailController;
-use Flow\Id\Web\Profile\PhoneConfigController;
-use Flow\Id\Web\Profile\ProfileController;
-use Flow\Id\Web\Profile\SessionsController;
+use Flow\Id\Controller\AuthController;
+use Flow\Id\Controller\DashboardController;
+use Flow\Id\Controller\Profile\EmailController;
+use Flow\Id\Controller\Profile\PhoneConfigController;
+use Flow\Id\Controller\Profile\ProfileController;
+use Flow\Id\Controller\Profile\SessionsController;
 use OpenApi\Attributes\Info;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -3,6 +3,7 @@
 namespace Flow\Id\Storage\ArrayStorage;
 
 use Flow\Id\Storage\Interfaces\SessionStorageInterface;
+use Flow\Id\ValueObject\EncryptedData;
 
 class SessionArrayStorage implements SessionStorageInterface
 {
@@ -51,14 +52,18 @@ class SessionArrayStorage implements SessionStorageInterface
         }
     }
 
-    public function checkIssetSessionMetaInfo(string $session, string $encryptedIp, string $encryptedUa, string $encryptedAE, string $encryptedAL): ?int
+    public function checkIssetSessionMetaInfo(string $session, EncryptedData $encryptedIp, EncryptedData $encryptedUa, EncryptedData $encryptedAE, EncryptedData $encryptedAL): ?int
     {
+        $user = $this->checkIssetToken($session);
+        if($user === null){
+            return null;
+        }
         foreach ($this->sessionsMeta as $index => $meta) {
-            if ($meta['sessionId'] === (int) $session &&
-                $meta['ip'] === $encryptedIp &&
-                $meta['ua'] === $encryptedUa &&
-                $meta['acceptEncoding'] === $encryptedAE &&
-                $meta['acceptLang'] === $encryptedAL) {
+            if ($meta['sessionId'] === $user['sessionId'] &&
+                $meta['ip'] === $encryptedIp->value &&
+                $meta['ua'] === $encryptedUa->value &&
+                $meta['acceptEncoding'] === $encryptedAE->value &&
+                $meta['acceptLang'] === $encryptedAL->value) {
                 return $index + 1;
             }
         }
@@ -66,26 +71,26 @@ class SessionArrayStorage implements SessionStorageInterface
         return null;
     }
 
-    public function insertSessionMeta(int $sessionId, string $encryptedIp, string $encryptedUa, string $encryptedAE, string $encryptedAL, string $encryptedLastSeenAt): void
+    public function insertSessionMeta(int $sessionId, EncryptedData $encryptedIp, EncryptedData $encryptedUa, EncryptedData $encryptedAE, EncryptedData $encryptedAL, EncryptedData $encryptedLastSeenAt): void
     {
         $id = count($this->sessionsMeta) + 1;
         $this->sessionsMeta[] = [
             'id' => $id,
             'sessionId' => $sessionId,
-            'ip' => $encryptedIp,
-            'ua' => $encryptedUa,
-            'acceptLang' => $encryptedAL,
-            'acceptEncoding' => $encryptedAE,
-            'firstSeenAt' => $encryptedLastSeenAt,
-            'lastSeenAt' => $encryptedLastSeenAt,
+            'ip' => $encryptedIp->value,
+            'ua' => $encryptedUa->value,
+            'acceptLang' => $encryptedAL->value,
+            'acceptEncoding' => $encryptedAE->value,
+            'firstSeenAt' => $encryptedLastSeenAt->value,
+            'lastSeenAt' => $encryptedLastSeenAt->value,
         ];
     }
 
-    public function updateLastSeenSessionMeta(int $sessionMetaInfoId, string $encryptedLastSeenAt): void
+    public function updateLastSeenSessionMeta(int $sessionMetaInfoId, EncryptedData $encryptedLastSeenAt): void
     {
         foreach ($this->sessionsMeta as &$session) {
             if ($session['id'] === $sessionMetaInfoId) {
-                $session['lastSeenAt'] = $encryptedLastSeenAt;
+                $session['lastSeenAt'] = $encryptedLastSeenAt->value;
 
                 return;
             }

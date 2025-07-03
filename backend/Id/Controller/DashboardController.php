@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\Id\Web;
+namespace Flow\Id\Controller;
 
 use Flow\Core\Enums\ServicesEnum;
 use Flow\Id\DTO\CheckAuthDTO;

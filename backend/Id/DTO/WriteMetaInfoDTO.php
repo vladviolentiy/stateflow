@@ -4,6 +4,7 @@ namespace Flow\Id\DTO;
 
 use Flow\Core\Interfaces\CreateFromRequestInterface;
 use Flow\Core\Interfaces\DtoInterface;
+use Flow\Id\ValueObject\EncryptedData;
 use Symfony\Component\HttpFoundation\Request;
 use VladViolentiy\VivaFramework\Validation;
 
@@ -11,19 +12,19 @@ readonly class WriteMetaInfoDTO implements CreateFromRequestInterface, DTOInterf
 {
     /**
      * @param non-empty-string $token
-     * @param non-empty-string $ip
-     * @param non-empty-string $userAgent
-     * @param non-empty-string $acceptLanguage
-     * @param non-empty-string $acceptEncoding
-     * @param non-empty-string $lastSeen
+     * @param EncryptedData $ip
+     * @param EncryptedData $userAgent
+     * @param EncryptedData $acceptLanguage
+     * @param EncryptedData $acceptEncoding
+     * @param EncryptedData $lastSeen
      */
     public function __construct(
         public string $token,
-        public string $ip,
-        public string $userAgent,
-        public string $acceptLanguage,
-        public string $acceptEncoding,
-        public string $lastSeen,
+        public EncryptedData $ip,
+        public EncryptedData $userAgent,
+        public EncryptedData $acceptLanguage,
+        public EncryptedData $acceptEncoding,
+        public EncryptedData $lastSeen,
     ) {}
 
     public static function createFromRequest(Request $request): self
@@ -36,25 +37,13 @@ readonly class WriteMetaInfoDTO implements CreateFromRequestInterface, DTOInterf
         $encryptedLastSeen =  $request->request->getString('lastSeen');
 
         Validation::hash($session);
-        Validation::nonEmpty($encryptedIp);
-        Validation::nonEmpty($encryptedUa);
-        Validation::nonEmpty($encryptedAE);
-        Validation::nonEmpty($encryptedAL);
-        Validation::nonEmpty($encryptedLastSeen);
-
-        \Flow\Core\Validation::encryptedData($encryptedIp, 'ip');
-        \Flow\Core\Validation::encryptedData($encryptedUa, 'ua');
-        \Flow\Core\Validation::encryptedData($encryptedAE, 'accept encoding');
-        \Flow\Core\Validation::encryptedData($encryptedAL, 'accept language');
-        \Flow\Core\Validation::encryptedData($encryptedLastSeen, 'last seen at');
-
         return new self(
             $session,
-            $encryptedIp,
-            $encryptedUa,
-            $encryptedAL,
-            $encryptedAE,
-            $encryptedLastSeen,
+            new EncryptedData($encryptedIp, 'ip'),
+            new EncryptedData($encryptedUa, 'ua'),
+            new EncryptedData($encryptedAL, 'accept language'),
+            new EncryptedData($encryptedAE, 'accept encoding'),
+            new EncryptedData($encryptedLastSeen, 'last seen at'),
         );
     }
 }

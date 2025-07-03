@@ -4,8 +4,8 @@ namespace Flow\Tests\Iteration\Id;
 
 use Flow\Core\Database;
 use Flow\Core\Enums\ServicesEnum;
-use Flow\Id\Models\EncryptedData;
-use Flow\Id\Models\Password;
+use Flow\Id\ValueObject\EncryptedData;
+use Flow\Id\ValueObject\Password;
 use Flow\Id\Storage\EmailStorage;
 use Flow\Id\Storage\Migrations\Migration;
 use Flow\Id\Storage\Migrations\Migration_0000;

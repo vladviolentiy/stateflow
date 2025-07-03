@@ -3,6 +3,7 @@
 namespace Flow\Id\Storage;
 
 use Flow\Id\Storage\Interfaces\SessionStorageInterface;
+use Flow\Id\ValueObject\EncryptedData;
 use mysqli;
 use VladViolentiy\VivaFramework\Databases\MysqliV2;
 
@@ -36,20 +37,20 @@ GROUP BY sessions.id", [$userId])->fetch_all(MYSQLI_ASSOC);
 
     public function insertSessionMeta(
         int $sessionId,
-        string $encryptedIp,
-        string $encryptedUa,
-        string $encryptedAE,
-        string $encryptedAL,
-        string $encryptedLastSeenAt,
+        EncryptedData $encryptedIp,
+        EncryptedData $encryptedUa,
+        EncryptedData $encryptedAE,
+        EncryptedData $encryptedAL,
+        EncryptedData $encryptedLastSeenAt,
     ): void {
         $this->executeQueryBool('INSERT INTO 
     sessionsMeta(sessionId, ip, ua, acceptLang, acceptEncoding, firstSeenAt, lastSeenAt) 
-VALUES (?,?,?,?,?,?,?)', [$sessionId, $encryptedIp, $encryptedUa, $encryptedAL, $encryptedAE, $encryptedLastSeenAt, $encryptedLastSeenAt]);
+VALUES (?,?,?,?,?,?,?)', [$sessionId, $encryptedIp->value, $encryptedUa->value, $encryptedAL->value, $encryptedAE->value, $encryptedLastSeenAt->value, $encryptedLastSeenAt->value]);
     }
 
-    public function updateLastSeenSessionMeta(int $sessionMetaInfoId, string $encryptedLastSeenAt): void
+    public function updateLastSeenSessionMeta(int $sessionMetaInfoId, EncryptedData $encryptedLastSeenAt): void
     {
-        $this->executeQueryBool('UPDATE sessionsMeta SET lastSeenAt=? where id=?', [$encryptedLastSeenAt, $sessionMetaInfoId]);
+        $this->executeQueryBool('UPDATE sessionsMeta SET lastSeenAt=? where id=?', [$encryptedLastSeenAt->value, $sessionMetaInfoId]);
     }
 
     public function insertSession(string $hash, int $userId): void
@@ -59,16 +60,16 @@ VALUES (?,?,?,?,?,?,?)', [$sessionId, $encryptedIp, $encryptedUa, $encryptedAL, 
 
     public function checkIssetSessionMetaInfo(
         string $session,
-        string $encryptedIp,
-        string $encryptedUa,
-        string $encryptedAE,
-        string $encryptedAL,
+        EncryptedData $encryptedIp,
+        EncryptedData $encryptedUa,
+        EncryptedData $encryptedAE,
+        EncryptedData $encryptedAL,
     ): ?int {
         /** @var array{id:positive-int}|null $i */
         $i = $this->executeQuery('SELECT sessionsMeta.id
 FROM sessionsMeta 
     JOIN sessions ON sessionsMeta.sessionId=sessions.id 
-WHERE authHash=unhex(?) and ip=? and ua=? and acceptEncoding=? and acceptLang=?', [$session, $encryptedIp, $encryptedUa, $encryptedAE, $encryptedAL])->fetch_array(MYSQLI_ASSOC);
+WHERE authHash=unhex(?) and ip=? and ua=? and acceptEncoding=? and acceptLang=?', [$session, $encryptedIp->value, $encryptedUa->value, $encryptedAE->value, $encryptedAL->value])->fetch_array(MYSQLI_ASSOC);
         if ($i === null) {
             return null;
         }

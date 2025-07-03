@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\Id\Models;
+namespace Flow\Id\ValueObject;
 
 use VladViolentiy\VivaFramework\Validation;
 

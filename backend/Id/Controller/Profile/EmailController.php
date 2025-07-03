@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\Id\Web\Profile;
+namespace Flow\Id\Controller\Profile;
 
 use Flow\Core\Enums\ServicesEnum;
 use Flow\Core\WebPrivate;

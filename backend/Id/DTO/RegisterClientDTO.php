@@ -3,10 +3,10 @@
 namespace Flow\Id\DTO;
 
 use Flow\Core\Interfaces\DtoInterface;
-use Flow\Id\Models\EncryptedData;
-use Flow\Id\Models\Password;
-use Flow\Id\Models\PrivateKey;
-use Flow\Id\Models\RsaPublicKey;
+use Flow\Id\ValueObject\EncryptedData;
+use Flow\Id\ValueObject\Password;
+use Flow\Id\ValueObject\PrivateKey;
+use Flow\Id\ValueObject\RsaPublicKey;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(

@@ -3,8 +3,8 @@
 namespace Flow\Id\Services\Profile;
 
 use Flow\Id\Services\BaseService;
-use Flow\Id\Models\Password;
-use Flow\Id\Models\PrivateKey;
+use Flow\Id\ValueObject\Password;
+use Flow\Id\ValueObject\PrivateKey;
 use Flow\Id\Storage\Interfaces\UserStorageInterface;
 
 class ProfileService extends BaseService

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\Id\Web\Profile;
+namespace Flow\Id\Controller\Profile;
 
 use Flow\Core\WebPrivate;
 use Flow\Id\Services\Profile\SessionsService;

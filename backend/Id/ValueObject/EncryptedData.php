@@ -1,18 +1,18 @@
 <?php
 
-namespace Flow\Id\Models;
+namespace Flow\Id\ValueObject;
 
 use VladViolentiy\VivaFramework\Validation;
 
-readonly class RsaPublicKey
+readonly class EncryptedData
 {
-    /** @var non-empty-string */
+    /** @var non-empty-string  */
     public string $value;
 
     public function __construct(string $value, string $field = '')
     {
         Validation::nonEmpty($value);
-        \Flow\Core\Validation::RSAPublicKey()->validate($value, $field);
+        \Flow\Core\Validation::encryptedData($value, $field);
         $this->value = $value;
     }
 }

@@ -8,10 +8,10 @@ use Flow\Core\Validation;
 use Flow\Core\Validations\EncryptedDataValidator;
 use Flow\Core\Validations\RsaPublicKeyValidator;
 use Flow\Id\DTO\RegisterClientDTO;
-use Flow\Id\Models\EncryptedData;
-use Flow\Id\Models\Password;
-use Flow\Id\Models\PrivateKey;
-use Flow\Id\Models\RsaPublicKey;
+use Flow\Id\ValueObject\EncryptedData;
+use Flow\Id\ValueObject\Password;
+use Flow\Id\ValueObject\PrivateKey;
+use Flow\Id\ValueObject\RsaPublicKey;
 use Flow\Id\Resources\RegisterResource;
 use Flow\Id\Services\AuthService;
 use Flow\Id\Services\BaseService;
@@ -25,6 +25,7 @@ use Flow\Tests\Helpers\RegisterClientDtoSeeder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
+use VladViolentiy\VivaFramework\Exceptions\NotfoundException;
 use VladViolentiy\VivaFramework\Exceptions\ValidationException;
 
 #[CoversClass(AuthService::class)]
@@ -129,7 +130,7 @@ class AuthTest extends TestCase
         $this->createNewUser();
         $uuid = $this->uuidList[0];
 
-        $this->expectException(IncorrectPasswordException::class);
+        $this->expectException(NotfoundException::class);
         $this->auth->auth(
             $uuid,
             AuthMethods::from('uuid'),
