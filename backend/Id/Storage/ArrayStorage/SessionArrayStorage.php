@@ -7,7 +7,7 @@ use Flow\Id\ValueObject\EncryptedData;
 
 class SessionArrayStorage implements SessionStorageInterface
 {
-    /** @var list<array{id: positive-int, userId: positive-int, sessionId: positive-int, authHash: non-empty-string, expiredAt: string}> */
+    /** @var list<array{id: positive-int, userId: positive-int, authHash: non-empty-string, expiredAt: string}> */
     private array $sessions = [];
     /** @var list<array{id: positive-int, sessionId: positive-int, ip: non-empty-string, ua: non-empty-string, acceptLang: non-empty-string, acceptEncoding: non-empty-string, firstSeenAt: string, lastSeenAt: string}> */
     private array $sessionsMeta = [];
@@ -18,7 +18,6 @@ class SessionArrayStorage implements SessionStorageInterface
         $this->sessions[] = [
             'id' => $sessionId,
             'userId' => $userId,
-            'sessionId' => $sessionId,
             'authHash' => $hash,
             'expiredAt' => date('Y-m-d H:i:s', strtotime('+90 days')),
         ];
@@ -104,7 +103,7 @@ class SessionArrayStorage implements SessionStorageInterface
                 return [
                     'userId' => $session['userId'],
                     'lang' => 'ru',
-                    'sessionId' => $session['sessionId'],
+                    'sessionId' => $session['id'],
                 ];
             }
         }
