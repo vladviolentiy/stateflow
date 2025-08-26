@@ -37,9 +37,9 @@ class RegisterClientFactory implements CreateFromRequestInterface
         $decodedSalt = base64_decode($salt);
 
         if (
-            $decodedSalt === $decodedIv ||
-            strlen($decodedIv) !== 16 ||
-            strlen($decodedSalt) !== 16
+            $decodedSalt === $decodedIv
+            || strlen($decodedIv) !== 16
+            || strlen($decodedSalt) !== 16
         ) {
             throw new ValidationException();
         }

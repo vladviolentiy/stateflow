@@ -17,14 +17,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AuthController extends Web
 {
-    private readonly AuthService $controller;
+    private readonly AuthService $authService;
 
     public function __construct(Request $request)
     {
         parent::__construct($request);
         $conn = $this->databaseConnectionFactory->createConnection(ServicesEnum::Id);
 
-        $this->controller = new AuthService(new UserStorage($conn), new SessionStorage($conn));
+        $this->authService = new AuthService(new UserStorage($conn), new SessionStorage($conn));
     }
 
     /**
@@ -34,7 +34,7 @@ class AuthController extends Web
     {
         $phone = $this->request->request->getString('authString');
         $type = $this->request->request->getString('type');
-        $data = $this->controller->getAuthDataForUser($phone, AuthMethods::from($type));
+        $data = $this->authService->getAuthDataForUser($phone, AuthMethods::from($type));
 
         return new JsonResponse(SuccessResponse::data($data));
     }
@@ -90,7 +90,7 @@ class AuthController extends Web
         $phone = $this->request->request->getString('authString');
         $type = $this->request->request->getString('authStringType');
         $authString = $this->request->request->getString('password');
-        $data = $this->controller->auth($phone, AuthMethods::from($type), AuthVia::Password, $authString);
+        $data = $this->authService->auth($phone, AuthMethods::from($type), AuthVia::Password, $authString);
 
         return $data->toResponse();
     }
@@ -120,7 +120,7 @@ class AuthController extends Web
     {
         $creds = RegisterClientFactory::createFromRequest($this->request);
 
-        $uuid = $this->controller->createNewUser($creds);
+        $uuid = $this->authService->createNewUser($creds);
 
         return $uuid->toResponse();
     }

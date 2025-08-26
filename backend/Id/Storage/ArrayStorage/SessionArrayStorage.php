@@ -58,11 +58,11 @@ class SessionArrayStorage implements SessionStorageInterface
             return null;
         }
         foreach ($this->sessionsMeta as $index => $meta) {
-            if ($meta['sessionId'] === $user['sessionId'] &&
-                $meta['ip'] === $encryptedIp->value &&
-                $meta['ua'] === $encryptedUa->value &&
-                $meta['acceptEncoding'] === $encryptedAE->value &&
-                $meta['acceptLang'] === $encryptedAL->value) {
+            if ($meta['sessionId'] === $user['sessionId']
+                && $meta['ip'] === $encryptedIp->value
+                && $meta['ua'] === $encryptedUa->value
+                && $meta['acceptEncoding'] === $encryptedAE->value
+                && $meta['acceptLang'] === $encryptedAL->value) {
                 return $index + 1;
             }
         }
