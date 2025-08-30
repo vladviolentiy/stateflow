@@ -136,8 +136,9 @@ class Application
         $routes = Application::$list;
 
         try {
+            $requestMethod = $request->getMethod();
             foreach ($routes as $route) {
-                if ($route['method'] === $request->getMethod() and $route['route'] === $require) {
+                if ($route['method'] === $requestMethod && $route['route'] === $require) {
                     $method = $route['handler'];
                     $class = new $route['class']($request);
                     /** @var JsonResponse $response */
