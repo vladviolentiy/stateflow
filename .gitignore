@@ -36,3 +36,5 @@ coverage
 /package-lock.json
 
 .env.testing
+.scannerwork
+*.cache
