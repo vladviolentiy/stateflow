@@ -12,7 +12,7 @@ readonly class RsaPublicKey
     public function __construct(string $value, string $field = '')
     {
         Validation::nonEmpty($value);
-        \Flow\Core\Validation::RSAPublicKey()->validate($value, $field);
+        \Flow\Core\Validation::rsaPublicKey()->validate($value, $field);
         $this->value = $value;
     }
 }

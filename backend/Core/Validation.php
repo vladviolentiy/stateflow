@@ -12,7 +12,7 @@ class Validation
     /** @var array<string, ValidationInterface>  */
     private static array $objects = [];
 
-    public static function RSAPublicKey(): ValidationInterface
+    public static function rsaPublicKey(): ValidationInterface
     {
         $value = ValidatorEnum::RSAKey->value;
         if (!isset(self::$objects[$value])) {

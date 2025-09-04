@@ -19,14 +19,14 @@ class ValidationTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
         $public = RSAHelpers::createPublicKey(2048);
-        Validation::RSAPublicKey()->validate($public);
+        Validation::rsaPublicKey()->validate($public);
     }
 
     public function testRSAValidationBadStartString(): void
     {
         $this->expectException(ValidationException::class);
         $public = RSAHelpers::createPublicKey(2048);
-        Validation::RSAPublicKey()->validate('test' . $public);
+        Validation::rsaPublicKey()->validate('test' . $public);
     }
 
     public function testValidatorEncryptedData(): void
