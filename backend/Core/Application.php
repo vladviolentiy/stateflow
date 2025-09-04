@@ -134,9 +134,8 @@ class Application
         $uri = $request->server->get('REQUEST_URI');
         $require = explode('?', $uri)[0];
         $routes = Application::$list;
-
+        $requestMethod = $request->getMethod();
         try {
-            $requestMethod = $request->getMethod();
             foreach ($routes as $route) {
                 if ($route['method'] === $requestMethod && $route['route'] === $require) {
                     $method = $route['handler'];
